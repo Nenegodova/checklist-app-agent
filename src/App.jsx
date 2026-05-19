@@ -217,17 +217,16 @@ const ui = {
   },
 
   card: {
-  display: "flex",
-  alignItems: "flex-start",
-  gap: 10,
-  padding: 14,
-  border: `1px solid ${border}`,
-  background: card,
-  textAlign: "left",
-  borderRadius: 12,
-  transition: "all 0.18s ease",
-  cursor: "pointer",
-},
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 10,
+    padding: 14,
+    border: `1px solid ${border}`,
+    background: card,
+    textAlign: "left",
+    borderRadius: 12,
+    transition: "all 0.15s ease"
+  },
 
   taskText: {
     flex: 1,
