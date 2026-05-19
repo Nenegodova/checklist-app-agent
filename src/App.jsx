@@ -293,12 +293,13 @@ const ui = {
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {tasks[cat].map((task, i) => (
                   <label
-                    key={i}
-                   style={{
-  ...ui.card,
-  display: focusMode && task.done ? "none" : "flex"
-}}
-                  >
+  key={i}
+  className="task-card"
+  style={{
+    ...ui.card,
+    display: focusMode && task.done ? "none" : "flex"
+  }}
+>
                     <input
                       type="checkbox"
                       checked={task.done}
