@@ -216,17 +216,18 @@ const ui = {
     gap: 6
   },
 
-  card: {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: 10,
-    padding: 14,
-    border: `1px solid ${border}`,
-    background: card,
-    textAlign: "left",
-    borderRadius: 12,
-    transition: "all 0.15s ease"
-  },
+ card: {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 10,
+  padding: 14,
+  border: `1px solid ${border}`,
+  background: card,
+  textAlign: "left",
+  borderRadius: 12,
+  transition: "all 0.18s ease",
+  cursor: "pointer",
+},
 
   taskText: {
     flex: 1,
@@ -290,12 +291,26 @@ const ui = {
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {tasks[cat].map((task, i) => (
                   <label
-                    key={i}
-                   style={{
-  ...ui.card,
-  display: focusMode && task.done ? "none" : "flex"
-}}
-                  >
+  key={i}
+  style={{
+    ...ui.card,
+    display: focusMode && task.done ? "none" : "flex",
+    transform: "translateY(0px)",
+    boxShadow: "none"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform = "translateY(-2px)";
+    e.currentTarget.style.boxShadow = dark
+      ? "0 8px 20px rgba(0,0,0,0.35)"
+      : "0 8px 20px rgba(0,0,0,0.08)";
+    e.currentTarget.style.borderColor = dark ? "#3a3a40" : "#d1d5db";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform = "translateY(0px)";
+    e.currentTarget.style.boxShadow = "none";
+    e.currentTarget.style.borderColor = border;
+  }}
+>
                     <input
                       type="checkbox"
                       checked={task.done}
@@ -325,10 +340,11 @@ const ui = {
 const btn = {
   padding: "6px 12px",
   borderRadius: 10,
-  border: "1px solid #d1d5db",
-  background: "#ffffff",
-  color: "#111827",
+  border: `1px solid ${border}`,
+  background: dark ? "#18181b" : "#ffffff",
+  color: dark ? "#e8e8ea" : "#111827",
   cursor: "pointer",
-  fontSize: 13
+  fontSize: 13,
+  transition: "all 0.15s ease"
 };
 
