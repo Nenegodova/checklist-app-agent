@@ -256,15 +256,15 @@ const ui = {
           gap: 12,
           marginBottom: 20
         }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: 28, textAlign: "center", fontWeight: 700, color: title }}>
-              Чек-лист проверки
-            </h1>
+          <div style={{ flex: 1, textAlign: "center" }}>
+  <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: title }}>
+    Чек-лист проверки
+  </h1>
 
-            <div style={{ marginTop: 6, fontSize: 13, color: mutedColor }}>
-              {doneTasks}/{totalTasks} ({percent}%)
-            </div>
-          </div>
+  <div style={{ marginTop: 6, fontSize: 13, color: mutedColor }}>
+    {doneTasks}/{totalTasks} ({percent}%)
+  </div>
+</div>
 
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             <button style={btn} onClick={() => setDark(v => !v)}>Тема</button>
