@@ -282,7 +282,7 @@ const ui = {
         {Object.keys(tasks).map((cat) => (
           <div key={cat} style={{ marginBottom: 20 }}>
 
-            <div onClick={() => toggleCollapse(cat)} style={{ cursor: "pointer", marginBottom: 10 }}>
+            <div onClick={() => toggleCollapse(cat)} style={ui.categoryTitle}>
               {collapsed[cat] ? "▶" : "▼"} {cat}
             </div>
 
@@ -291,16 +291,10 @@ const ui = {
                 {tasks[cat].map((task, i) => (
                   <label
                     key={i}
-                    style={{
-                      display: focusMode && task.done ? "none" : "flex",
-                      alignItems: "flex-start",
-                      gap: 10,
-                      padding: 12,
-                      border: `1px solid ${border}`,
-                      background: card,
-                      textAlign: "left",
-                      borderRadius: 10
-                    }}
+                   style={{
+  ...ui.card,
+  display: focusMode && task.done ? "none" : "flex"
+}}
                   >
                     <input
                       type="checkbox"
@@ -309,10 +303,10 @@ const ui = {
                     />
 
                     <span style={{
-                      flex: 1,
-                      textDecoration: task.done ? "line-through" : "none",
-                      opacity: task.done ? 0.5 : 1
-                    }}>
+  ...ui.taskText,
+  textDecoration: task.done ? "line-through" : "none",
+  opacity: task.done ? 0.5 : 1
+}}>
                       {renderTextWithLinks(task.text)}
                     </span>
                   </label>
