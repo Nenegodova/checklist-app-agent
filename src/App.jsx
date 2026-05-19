@@ -238,13 +238,16 @@ const ui = {
 };
 
   return (
-    <div style={{
+  <div
+    className={dark ? "dark" : ""}
+    style={{
       padding: 30,
       minHeight: "100vh",
       fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial",
       background: bg,
       color: textColor
-    }}>
+    }}
+  >
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
         {/* HEADER FIXED */}
