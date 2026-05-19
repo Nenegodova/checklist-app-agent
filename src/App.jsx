@@ -223,14 +223,7 @@ const category = dark ? "#e5e7eb" : "#111827";
           marginBottom: 20
         }}>
           <div>
-            <h1 style={{
-  margin: 0,
-  fontSize: 28,
-  fontWeight: 700,
-  color: title,
-  textAlign: "center",
-  width: "100%"
-}}>
+            <h1 style={{ margin: 0, fontSize: 28, textAlign: "center", fontWeight: 700, color: title }}>
               Чек-лист проверки
             </h1>
 
