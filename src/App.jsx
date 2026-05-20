@@ -303,28 +303,26 @@ const ui = {
         {/* LIST */}
         {Object.keys(tasks).map((cat) => (
           <div key={cat} style={{ marginBottom: 20 }}>
+<div
+  onClick={() => toggleCollapse(cat)}
+  style={{
+    ...ui.categoryTitle,
+    justifyContent: "space-between"
+  }}
+>
+  {/* левая часть */}
+  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+    <span style={{ fontSize: 16 }}>
+      {collapsed[cat] ? "▶" : "▼"}
+    </span>
 
-            <div onClick={() => toggleCollapse(cat)} style={ui.categoryTitle}>
-  {collapsed[cat] ? "▶" : "▼"}
+    <span>{cat}</span>
+  </div>
 
-  {cat}
-
-  <span
-    style={{
-      marginLeft: 8,
-      fontSize: 12,
-      opacity: 0.7
-    }}
-  >
-    {
-      tasks[cat].filter(t => t.done).length
-    }/{tasks[cat].length}
-
-    {
-      tasks[cat].every(t => t.done)
-        ? " ✓"
-        : ""
-    }
+  {/* правая часть */}
+  <span style={{ fontSize: 12, opacity: 0.7 }}>
+    {tasks[cat].filter(t => t.done).length}/{tasks[cat].length}
+    {tasks[cat].every(t => t.done) ? " ✓" : ""}
   </span>
 </div>
 
