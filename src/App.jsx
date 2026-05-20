@@ -471,7 +471,7 @@ const ui = {
       color: "#fff",
       fontSize: 22,
       cursor: "pointer",
-      boxShadow: "0 8px 24px rgba(140, 142, 147, 0.35)"
+      boxShadow: "0 8px 24px rgba(112, 114, 118, 0.35)"
     }}
   >
     📝
