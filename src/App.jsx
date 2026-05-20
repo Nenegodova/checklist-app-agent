@@ -318,10 +318,20 @@ const ui = {
 
   <span>{cat}</span>
 
-  <span style={{ fontSize: 12, opacity: 0.7 }}>
-    {tasks[cat].filter(t => t.done).length}/{tasks[cat].length}
-    {tasks[cat].every(t => t.done) ? " ✓" : ""}
-  </span>
+ <span
+  style={{
+    fontSize: 12,
+    opacity: 0.9,
+    padding: "2px 8px",
+    borderRadius: 999,
+    background: dark ? "#2a2a2e" : "#e5e7eb",
+    minWidth: 42,
+    textAlign: "center"
+  }}
+>
+  {tasks[cat].filter(t => t.done).length}/{tasks[cat].length}
+  {tasks[cat].every(t => t.done) ? " ✓" : ""}
+</span>
 </div>
 
             {!collapsed[cat] && (
