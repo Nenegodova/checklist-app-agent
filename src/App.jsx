@@ -165,11 +165,15 @@ const [notesOpen, setNotesOpen] = useState(false);
     setTasks(cleared);
   };
 
-  const hardReset = () => {
-    localStorage.removeItem("checklist");
-    localStorage.removeItem("collapsed");
-    window.location.reload();
-  };
+ const hardReset = () => {
+  localStorage.removeItem("checklist");
+  localStorage.removeItem("collapsed");
+  localStorage.removeItem("notes");
+
+  setNotes("");
+
+  window.location.reload();
+};
 
   const toggleCollapse = (cat) => {
     setCollapsed((prev) => ({
