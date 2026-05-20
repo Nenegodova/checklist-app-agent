@@ -404,72 +404,84 @@ const ui = {
             </div>
     </div>
 
-    {/* FLOATING NOTES BUTTON */}
-    <button
-      onClick={() => setNotesOpen(v => !v)}
+   {/* FLOATING NOTES */}
+<div
+  style={{
+    position: "fixed",
+    right: 24,
+    bottom: 24,
+    zIndex: 999
+  }}
+>
+  {notesOpen && (
+    <div
       style={{
-        position: "fixed",
-        right: 20,
-        bottom: 20,
-        width: 56,
-        height: 56,
-        borderRadius: "50%",
-        border: "1px solid #d1d5db",
-        background: dark ? "#2a2a2e" : "#ffffff",
-        color: dark ? "#fff" : "#111",
-        cursor: "pointer",
-        fontSize: 18,
-        boxShadow: "0 6px 20px rgba(0,0,0,0.15)"
+        width: 320,
+        marginBottom: 12,
+        padding: 16,
+        borderRadius: 18,
+        border: `1px solid ${border}`,
+        background: card,
+        boxShadow: dark
+          ? "0 12px 40px rgba(0,0,0,0.45)"
+          : "0 12px 30px rgba(0,0,0,0.12)"
       }}
     >
-      📝
-    </button>
-
-    {notesOpen && (
       <div
         style={{
-          position: "fixed",
-          right: 20,
-          bottom: 90,
-          width: 320,
-          padding: 14,
-          borderRadius: 14,
-          border: `1px solid ${border}`,
-          background: card,
-          boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
+          fontWeight: 700,
+          marginBottom: 10,
+          color: title,
+          fontSize: 15
         }}
       >
-        <div
-          style={{
-            fontWeight: 600,
-            marginBottom: 8,
-            color: title
-          }}
-        >
-          Заметки
-        </div>
-
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Заметки по ходу проверки..."
-          style={{
-            width: "100%",
-            minHeight: 140,
-            padding: 10,
-            borderRadius: 10,
-            border: `1px solid ${border}`,
-            background: dark ? "#111" : "#fff",
-            color: textColor,
-            resize: "vertical"
-          }}
-        />
+        Заметки
       </div>
-    )}
 
-  </>
-  );
+      <textarea
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        placeholder="Вопросы, правки и всё, что важно не забыть"
+        style={{
+          width: "100%",
+          height: 180,
+          padding: 12,
+          borderRadius: 12,
+          border: `1px solid ${border}`,
+          background: dark ? "#111" : "#fff",
+          color: textColor,
+          fontSize: 14,
+          lineHeight: "20px",
+          resize: "none",
+          outline: "none",
+          boxSizing: "border-box"
+        }}
+      />
+    </div>
+  )}
+
+  <button
+    onClick={() => setNotesOpen(v => !v)}
+    style={{
+      width: 58,
+      height: 58,
+      borderRadius: "50%",
+      border: "none",
+      background: "#2563eb",
+      color: "#fff",
+      fontSize: 22,
+      cursor: "pointer",
+      boxShadow: "0 8px 24px rgba(37,99,235,.35)"
+    }}
+  >
+    📝
+  </button>
+</div>
+
+</>
+);
 }
+  
 
 
 const btn = {
