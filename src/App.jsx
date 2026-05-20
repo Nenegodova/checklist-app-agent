@@ -117,13 +117,30 @@ export default function App() {
   }, [collapsed]);
 
   const toggle = (cat, index) => {
-    setTasks((prev) => ({
+  setTasks((prev) => {
+
+    const updated = prev[cat].map((t, i) =>
+      i === index
+        ? { ...t, done: !t.done }
+        : t
+    );
+
+    const completed =
+      updated.every(t => t.done);
+
+    if (completed) {
+      setCollapsed(prevCollapsed => ({
+        ...prevCollapsed,
+        [cat]: true
+      }));
+    }
+
+    return {
       ...prev,
-      [cat]: prev[cat].map((t, i) =>
-        i === index ? { ...t, done: !t.done } : t
-      )
-    }));
-  };
+      [cat]: updated
+    };
+  });
+};
 
   const resetAll = () => {
     const cleared = {};
