@@ -181,6 +181,15 @@ const border = dark ? "#2a2a2e" : "#e5e7eb";
   const bg = dark ? "#0f0f10" : "#f5f5f7";
   const title = dark ? "#ffffff" : "#0a0a0a";
 const category = dark ? "#e5e7eb" : "#111827";
+const btn = {
+  padding: "6px 12px",
+  borderRadius: 10,
+  border: "1px solid #d1d5db",
+  background: "#ffffff",
+  color: "#111827",
+  cursor: "pointer",
+  fontSize: 13
+};
 
   const renderTextWithLinks = (text) => {
     const regex = /(\*[^*]+\*|https?:\/\/[^\s]+)/g;
@@ -274,44 +283,6 @@ const ui = {
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
 
-<div
-  style={{
-    marginBottom: 24,
-    padding: 16,
-    border: `1px solid ${border}`,
-    borderRadius: 14,
-    background: card
-  }}
->
-  <div
-    style={{
-      marginBottom: 10,
-      fontWeight: 600,
-      color: title
-    }}
-  >
-    Заметки
-  </div>
-
-  <textarea
-    value={notes}
-    onChange={(e) => setNotes(e.target.value)}
-    placeholder="Здесь можешь что-нибудь записать чтобы не забыть..."
-    style={{
-      width: "100%",
-      minHeight: 120,
-      padding: 12,
-      borderRadius: 10,
-      border: `1px solid ${border}`,
-      background: dark ? "#111" : "#fff",
-      color: textColor,
-      fontSize: 14,
-      resize: "vertical",
-      outline: "none",
-      boxSizing: "border-box"
-    }}
-  />
-</div>
 
         {/* HEADER FIXED */}
         <div style={{
@@ -345,6 +316,8 @@ const ui = {
             </button>
           </div>
         </div>
+
+
 
 
         {/* LIST */}
@@ -381,6 +354,9 @@ const ui = {
 </span>
 </div>
 
+
+
+
             {!collapsed[cat] && (
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {tasks[cat].map((task, i) => (
@@ -412,11 +388,51 @@ const ui = {
 
           </div>
         ))}
+<div
+  style={{
+    marginBottom: 24,
+    padding: 16,
+    border: `1px solid ${border}`,
+    borderRadius: 14,
+    background: card
+  }}
+>
+  <div
+    style={{
+      marginBottom: 10,
+      fontWeight: 600,
+      color: title
+    }}
+  >
+    📝 Заметки
+  </div>
 
+  <textarea
+    value={notes}
+    onChange={(e) => setNotes(e.target.value)}
+    placeholder="Написать что-нибудь..."
+    style={{
+      width: "100%",
+      minHeight: 120,
+      padding: 12,
+      borderRadius: 10,
+      border: `1px solid ${border}`,
+      background: dark ? "#111" : "#fff",
+      color: textColor,
+      fontSize: 14,
+      resize: "vertical",
+      outline: "none",
+      boxSizing: "border-box"
+    }}
+  />
+</div>
       </div>
     </div>
+
   );
 }
+
+
 
 const btn = {
   padding: "6px 12px",
