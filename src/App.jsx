@@ -273,39 +273,6 @@ const ui = {
   >
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
 
-        {/* HEADER FIXED */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 12,
-          marginBottom: 20
-        }}>
-
-          
-          <div style={{ flex: 1, textAlign: "center" }}>
-  <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: title }}>
-    Чек-лист проверки
-  </h1>
-
-  <div style={{ marginTop: 6, fontSize: 13, color: mutedColor }}>
-    {doneTasks}/{totalTasks} ({percent}%)
-  </div>
-</div>
-
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <button style={btn} onClick={() => setDark(v => !v)}>Тема</button>
-            <button style={btn} onClick={resetAll}>Сброс</button>
-            <button style={btn} onClick={() => setFocusMode(v => !v)}>
-              {focusMode ? "Фокус ON" : "Фокус OFF"}
-            </button>
-            <button style={{ ...btn, color: "red" }} onClick={hardReset}>
-              RESET
-            </button>
-          </div>
-        </div>
-
 
 <div
   style={{
@@ -345,6 +312,41 @@ const ui = {
     }}
   />
 </div>
+
+        {/* HEADER FIXED */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 12,
+          marginBottom: 20
+        }}>
+
+          
+          <div style={{ flex: 1, textAlign: "center" }}>
+  <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: title }}>
+    Чек-лист проверки
+  </h1>
+
+  <div style={{ marginTop: 6, fontSize: 13, color: mutedColor }}>
+    {doneTasks}/{totalTasks} ({percent}%)
+  </div>
+</div>
+
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button style={btn} onClick={() => setDark(v => !v)}>Тема</button>
+            <button style={btn} onClick={resetAll}>Сброс</button>
+            <button style={btn} onClick={() => setFocusMode(v => !v)}>
+              {focusMode ? "Фокус ON" : "Фокус OFF"}
+            </button>
+            <button style={{ ...btn, color: "red" }} onClick={hardReset}>
+              RESET
+            </button>
+          </div>
+        </div>
+
+
         {/* LIST */}
         {Object.keys(tasks).map((cat) => (
           <div key={cat} style={{ marginBottom: 20 }}>
