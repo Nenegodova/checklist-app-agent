@@ -228,7 +228,7 @@ const btn = {
               marginRight: 4,
               borderRadius: 8,
               background: dark ? "#2a2a2e" : "#e8e8ea",
-              color: dark ? "#c0c0c8" : "#70727659",
+              color: dark ? "#7ab7ff" : "#2563eb",
               textDecoration: "none",
               fontSize: 13,
               fontWeight: 500
@@ -477,7 +477,7 @@ const ui = {
       color: "#fff",
       fontSize: 22,
       cursor: "pointer",
-      boxShadow: "0 8px 24px #70727659"
+      boxShadow: "0 8px 24px rgba(112, 114, 118, 0.35)"
     }}
   >
     ✍️
@@ -488,6 +488,7 @@ const ui = {
 );
 }
   
+
 
 
 
