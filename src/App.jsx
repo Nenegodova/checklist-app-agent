@@ -307,11 +307,13 @@ const ui = {
   onClick={() => toggleCollapse(cat)}
   style={{
     ...ui.categoryTitle,
-    justifyContent: "space-between"
+    display: "flex",
+    alignItems: "center",
+    gap: 10
   }}
 >
   {/* левая часть */}
-  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
     <span style={{ fontSize: 16 }}>
       {collapsed[cat] ? "▶" : "▼"}
     </span>
@@ -319,8 +321,14 @@ const ui = {
     <span>{cat}</span>
   </div>
 
-  {/* правая часть */}
-  <span style={{ fontSize: 12, opacity: 0.7 }}>
+  {/* счётчик НЕ уезжает в космос */}
+  <span
+    style={{
+      marginLeft: "auto",
+      fontSize: 12,
+      opacity: 0.7
+    }}
+  >
     {tasks[cat].filter(t => t.done).length}/{tasks[cat].length}
     {tasks[cat].every(t => t.done) ? " ✓" : ""}
   </span>
