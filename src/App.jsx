@@ -441,7 +441,7 @@ const ui = {
       <textarea
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        placeholder="Вопросы, правки и всё, что важно не забыть"
+        placeholder="Заметки по ходу проверки: вопросы, правки и всё, что не хочется потерять — можно записывать сюда, чтобы не держать в голове"
         style={{
           width: "100%",
           height: 180,
