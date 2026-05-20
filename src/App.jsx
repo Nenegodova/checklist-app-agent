@@ -4,7 +4,9 @@ const DATA_VERSION = "1.0";
 
 const LINKS = {
   "Методички":
-    "https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994"
+    "https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994",
+     "Мягкий перенос в заге":
+    "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe"
 };
 
 const DATA = {
@@ -478,7 +480,7 @@ const ui = {
       boxShadow: "0 8px 24px rgba(112, 114, 118, 0.35)"
     }}
   >
-    📝
+    ✍️
   </button>
 </div>
 
