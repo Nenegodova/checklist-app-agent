@@ -348,13 +348,30 @@ const border = dark ? "#2a2a2e" : "#e5e7eb";
   const title = dark ? "#ffffff" : "#0a0a0a";
 const category = dark ? "#e5e7eb" : "#111827";
 const btn = {
+  ...control,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center"
+};
+
+const control = {
+  height: 34,
   padding: "6px 12px",
   borderRadius: 10,
-  border: "1px solid #d1d5db",
-  background: "#ffffff",
-  color: "#111827",
-  cursor: "pointer",
-  fontSize: 13
+
+  border: `1px solid ${dark ? "#2a2a2e" : "#d1d5db"}`,
+  background: dark ? "#18181b" : "#ffffff",
+  color: dark ? "#e8e8ea" : "#111827",
+
+  fontSize: 13,
+  lineHeight: "20px",
+
+  outline: "none",
+  boxShadow: "none",
+
+  transition: "all 0.15s ease",
+
+  cursor: "pointer"
 };
 
  const renderTextWithLinks = (text) => {
@@ -510,36 +527,23 @@ const ui = {
     setPreset(e.target.value);
     window.location.reload();
   }}
-  style={{
-    appearance: "none",
-    WebkitAppearance: "none",
-    MozAppearance: "none",
+style={{
+  ...control,
+  minWidth: 140,
+  padding: "6px 36px 6px 12px",
 
-    minWidth: 140,
-    padding: "8px 36px 8px 12px",
-    borderRadius: 10,
+  appearance: "none",
+  WebkitAppearance: "none",
+  MozAppearance: "none",
 
-    border: `1px solid ${dark ? "#2a2a2e" : "#d1d5db"}`,
-    background: dark ? "#18181b" : "#ffffff",
-    color: dark ? "#e8e8ea" : "#111827",
+  backgroundImage: dark
+    ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
+    : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
 
-    fontSize: 13,
-    cursor: "pointer",
-
-    outline: "none",
-
-    // важное: убираем странные системные эффекты
-    boxShadow: "none",
-
-    // стрелка
-    backgroundImage: dark
-      ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
-      : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "right 12px center",
-    backgroundSize: "12px"
-  }}
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "right 12px center",
+  backgroundSize: "12px"
+}}
   onFocus={(e) => {
     e.target.style.borderColor = dark ? "#3f3f46" : "#9ca3af";
   }}
@@ -640,14 +644,14 @@ const ui = {
   type="checkbox"
   checked={task.done}
   onChange={() => toggle(cat, i)}
-  style={{
-    width: 16,
-    height: 16,
-    marginTop: 2,
-    accentColor: "#6b7280",
-    cursor: "pointer",
-    flexShrink: 0
-  }}
+style={{
+  width: 16,
+  height: 16,
+  marginTop: 2,
+  accentColor: dark ? "#3f3f46" : "#6b7280",
+  cursor: "pointer",
+  flexShrink: 0
+}}
 />
 
                     <div
