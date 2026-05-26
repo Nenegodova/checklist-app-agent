@@ -591,69 +591,86 @@ const ui = {
             <button style={btn} onClick={() => setDark(v => !v)}>Тема</button>
             
             
-          <select
-  value={preset}
-  onChange={(e) => {
-    localStorage.removeItem("checklist");
-    localStorage.removeItem("collapsed");
-    setPreset(e.target.value);
-  }}
+<div
   style={{
-    height: 34,
-    minWidth: 140,
-    padding: "0 36px 0 12px",
-
-    borderRadius: 10,
-    border: `1px solid ${dark ? "#2a2a2e" : "#d1d5db"}`,
-
-    background: dark ? "#18181b" : "#ffffff",
-    color: dark ? "#e8e8ea" : "#111827",
-
-    fontSize: 13,
-    cursor: "pointer",
-    outline: "none",
-
-    appearance: "none",
-    WebkitAppearance: "none",
-    MozAppearance: "none",
-
-    backgroundImage: dark
-      ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
-      : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "right 12px center",
-    backgroundSize: "12px"
+    position: "relative"
   }}
 >
+  <select
+    value={preset}
+    onChange={(e) => {
+      localStorage.removeItem("checklist");
+      localStorage.removeItem("collapsed");
+      setPreset(e.target.value);
+    }}
+    style={{
+      height: 34,
+      minWidth: 140,
+      padding: "0 36px 0 12px",
 
+      borderRadius: 10,
+      border: `1px solid ${dark ? "#2a2a2e" : "#d1d5db"}`,
 
+      background: dark
+        ? "#18181b"
+        : "#ffffff",
 
-<option value="default">
-Обычный
-</option>
+      color: dark
+        ? "#e8e8ea"
+        : "#111827",
 
-<option value="invest">
-Инвест
-</option>
+      fontSize: 13,
+      cursor: "pointer",
+      outline: "none",
 
-<option value="things">
-Вещи
-</option>
+      appearance: "none",
+      WebkitAppearance: "none",
+      MozAppearance: "none"
+    }}
+  >
+    <option value="default">
+      Обычный
+    </option>
 
-<option value="tests">
-Тест
-</option>
+    <option value="invest">
+      Инвест
+    </option>
 
-<option value="compare">
-Сравнятор
-</option>
+    <option value="things">
+      Вещи
+    </option>
 
-<option value="spending">
-Дневник трат
-</option>
+    <option value="tests">
+      Тест
+    </option>
 
-</select>
+    <option value="compare">
+      Сравнятор
+    </option>
+
+    <option value="spending">
+      Дневник трат
+    </option>
+  </select>
+
+  <span
+    style={{
+      position: "absolute",
+      right: 12,
+      top: "50%",
+      transform: "translateY(-50%)",
+
+      pointerEvents: "none",
+
+      fontSize: 10,
+      color: dark
+        ? "#a1a1aa"
+        : "#666"
+    }}
+  >
+    ▼
+  </span>
+</div>
             <button style={btn} onClick={resetAll}>Сброс</button>
             <button style={btn} onClick={() => setFocusMode(v => !v)}>
   {focusMode ? "Фокус: ON" : "Фокус: OFF"}
