@@ -540,8 +540,22 @@ style={{
       ? "#18181b"
       : "#fff",
 
+  color:
+    dark
+      ? "#e8e8ea"
+      : "#111827",
+
+  border:
+    `1px solid ${
+      dark
+        ? "#2a2a2e"
+        : "#d1d5db"
+    }`,
+
   backgroundImage:
-    `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+    dark
+      ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
+      : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
 
   backgroundRepeat:
     "no-repeat",
