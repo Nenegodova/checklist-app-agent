@@ -438,14 +438,15 @@ export default function App() {
 
               {!collapsed[cat] && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {tasks[cat].map((task, i) => (
-                    <label
-  key={i}
-  style={{
-    ...ui.card,
-    display: focusMode && task.done ? "none" : "flex"
-  }}
->
+                 {tasks[cat]
+  .filter(task => !(focusMode && task.done))
+  .map((task, i) => (
+    <label
+      key={task.text}
+      style={{
+        ...ui.card
+      }}
+    >
                       <div style={ui.taskText}>
                         {task.text}
                       </div>
