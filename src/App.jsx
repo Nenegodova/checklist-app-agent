@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 
 const DATA_VERSION = "1.0";
 
-const LINKS = {
-  "Методички":
-    "https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994",
-     "Мягкий перенос в заге.":
-    "https://symbl.cc/ru/00AD/",
-     "Правила переноса":
-    "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe"
-};
+
 
 const DATA = {
   "Админка": [
@@ -48,7 +41,7 @@ const DATA = {
     "У плашек с авторами стоит hl isbuble=true",
     "Опрос на месте, там все склеено",
     "Верная плашка редакции",
-    "Мягкий перенос в заге. Правила переноса",
+    "Мягкий перенос в заге [Символы](https://symbl.cc/ru/00AD/) [Правила](https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe)",
     "Расставить поля если нужно",
     "Проверить фичеры, баннеры, этажи"
   ],
@@ -69,7 +62,7 @@ const DATA = {
   ],
 
   "Прочее": [
-    "Методички",
+    "Методички [Открыть](https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994)",
     "Проверить комментарии на полях",
     "Проверить метку в кайтене об обновлении",
     "Проверить комментарии в кайтене",
@@ -208,10 +201,13 @@ const btn = {
 };
 
   const renderTextWithLinks = (text) => {
-  const parts = text.split(/(\*[^*]+\*)/g);
+  const regex =
+    /(\*[^*]+\*|\[([^\]]+)\]\((https?:\/\/[^)]+)\))/g;
 
-  return parts.flatMap((part, index) => {
-    if (!part) return [];
+  const parts = text.split(regex);
+
+  return parts.map((part, i) => {
+    if (!part) return null;
 
     // жирный текст
     if (
@@ -220,7 +216,7 @@ const btn = {
     ) {
       return (
         <strong
-          key={`bold-${index}`}
+          key={i}
           style={{ fontWeight: 700 }}
         >
           {part.slice(1, -1)}
@@ -228,56 +224,46 @@ const btn = {
       );
     }
 
-    let elements = [part];
+    // кнопки-ссылки
+    const match = part.match(
+      /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/
+    );
 
-    Object.keys(LINKS).forEach((key) => {
-      elements = elements.flatMap((piece) => {
-        if (typeof piece !== "string") {
-          return [piece];
-        }
+    if (match) {
+      const [, label, url] = match;
 
-        const chunks = piece.split(key);
+      return (
+        <a
+          key={i}
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            padding: "2px 8px",
+            marginLeft: 6,
+            borderRadius: 8,
+            background: dark
+              ? "#33334b"
+              : "#e8e8ea",
+            color: dark
+              ? "#7ab7ff"
+              : "#2563eb",
+            textDecoration: "none",
+            fontSize: 13,
+            fontWeight: 500
+          }}
+        >
+          {label}
+        </a>
+      );
+    }
 
-        return chunks.flatMap((chunk, i) => {
-          const result = [chunk];
-
-          if (i < chunks.length - 1) {
-            result.push(
-              <a
-                key={`${key}-${index}-${i}`}
-                href={LINKS[key]}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: "inline-block",
-                  padding: "2px 8px",
-                  marginRight: 6,
-                  borderRadius: 8,
-                  background: dark
-                    ? "#33334b"
-                    : "#e8e8ea",
-                  color: dark
-                    ? "#7ab7ff"
-                    : "#2563eb",
-                  textDecoration: "none",
-                  fontSize: 13,
-                  fontWeight: 500
-                }}
-              >
-                {key}
-              </a>
-            );
-          }
-
-          return result;
-        });
-      });
-    });
-
-    return elements.map((el, i) =>
-      typeof el === "string"
-        ? <span key={`${index}-${i}`}>{el}</span>
-        : el
+    return (
+      <span key={i}>
+        {part}
+      </span>
     );
   });
 };
