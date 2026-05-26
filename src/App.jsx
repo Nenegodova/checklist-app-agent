@@ -39,14 +39,6 @@ const PRESETS = {
         ]
       }
     ]
-  },
-
-  compare: {
-    "Админка": [{ text: "Тег noads" }]
-  },
-
-  spending: {
-    "Прочее": [{ text: "Нажата кнопка из сообщества" }]
   }
 };
 
@@ -141,30 +133,6 @@ export default function App() {
     localStorage.setItem("notes", notes);
   }, [notes]);
 
-  useEffect(() => {
-    const data = buildData();
-
-    setTasks((prev) => {
-      const next = {};
-      Object.keys(data).forEach((cat) => {
-        next[cat] = data[cat].map((t) => {
-          const text = typeof t === "string" ? t : t.text;
-          const links = typeof t === "string" ? [] : t.links || [];
-          const old = prev?.[cat]?.find((x) => x.text === text);
-
-          return {
-            text,
-            links,
-            done: old?.done ?? false
-          };
-        });
-      });
-      return next;
-    });
-
-    setCollapsed((prev) => buildCollapsed(data, prev));
-  }, [preset]);
-
   const toggle = (cat, index) => {
     setTasks((prev) => {
       const updated = prev[cat].map((t, i) =>
@@ -172,10 +140,7 @@ export default function App() {
       );
 
       if (updated.every((t) => t.done)) {
-        setCollapsed((prevC) => ({
-          ...prevC,
-          [cat]: true
-        }));
+        setCollapsed((p) => ({ ...p, [cat]: true }));
       }
 
       return { ...prev, [cat]: updated };
@@ -210,7 +175,11 @@ export default function App() {
     setCollapsed(buildCollapsed(data));
   };
 
-  const all = Object.values(tasks || {}).flat();
+  const toggleCollapse = (cat) => {
+    setCollapsed((p) => ({ ...p, [cat]: !p[cat] }));
+  };
+
+  const all = Object.values(tasks).flat();
   const done = all.filter((t) => t.done).length;
   const total = all.length;
   const percent = total ? Math.round((done / total) * 100) : 0;
@@ -229,27 +198,20 @@ export default function App() {
       <button onClick={hardReset}>RESET</button>
 
       {Object.keys(tasks).map((cat) => (
-        <div key={cat} style={{ marginTop: 20 }}>
-          <h3 onClick={() => setCollapsed((p) => ({ ...p, [cat]: !p[cat] }))}>
+        <div key={cat}>
+          <h3 onClick={() => toggleCollapse(cat)}>
             {collapsed[cat] ? "▶" : "▼"} {cat}
           </h3>
 
           {!collapsed[cat] &&
             tasks[cat].map((task, i) => (
-              <div
-                key={i}
-                style={{
-                  padding: 10,
-                  marginBottom: 6,
-                  background: card
-                }}
-              >
+              <div key={i} style={{ background: card, padding: 10 }}>
                 <input
                   type="checkbox"
                   checked={task.done}
                   onChange={() => toggle(cat, i)}
                 />
-                <span style={{ marginLeft: 10, textDecoration: task.done ? "line-through" : "none" }}>
+                <span style={{ marginLeft: 10 }}>
                   {task.text}
                 </span>
               </div>
@@ -257,13 +219,12 @@ export default function App() {
         </div>
       ))}
 
-      <button onClick={() => setNotesOpen((v) => !v)}>✍️</button>
+      <button onClick={() => setNotesOpen(v => !v)}>✍️</button>
 
       {notesOpen && (
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          style={{ width: 300, height: 150 }}
         />
       )}
     </div>
