@@ -1,31 +1,46 @@
 import { useEffect, useState } from "react";
 
-const DATA_VERSION = "1.0";
+const DATA_VERSION = "1.1";
 
 const PRESETS = {
-  default: [],
+  default: {},
 
-  invest: [
-    "Заполнена выдержка",
-    "Заполнен тикер"
-  ],
+  invest: {
+    "Админка": [
+      "Заполнена выдержка",
+      "Заполнен тикер"
+    ]
+  },
 
-  things: [
-    "Напоминание о пересчете цен"
-  ],
+  things: {
+    "Админка": [
+      "Напоминание о пересчете цен"
+    ]
+  },
 
-  tests: [
-    "В мини-тестах автор и подпись стоят перед лидом",
-    "В подвале больших тестов прописаны авторы и источники"
-  ],
+  tests: {
+    "Текст": [
+      "В мини-тестах автор и подпись стоят перед лидом"
+    ],
 
-  compare: [
-    "Тег noads"
-  ],
+    "Админка": [
+      "В подвале больших тестов прописаны авторы и источники",
+      "Тег noads",
+      "В больших тестах под обложкой указан иллюстратор"
+    ]
+  },
 
-  spending: [
-    "Нажата кнопка из сообщества"
-  ]
+  compare: {
+    "Админка": [
+      "Тег noads"
+    ]
+  },
+
+  spending: {
+    "Прочее": [
+      "Нажата кнопка из сообщества"
+    ]
+  }
 };
 
 const DATA = {
@@ -154,22 +169,29 @@ const buildData = () => {
       JSON.stringify(DATA)
     );
 
-  if (
-    PRESETS[preset]
-  ) {
+  const presetData =
+    PRESETS[preset];
 
-    result["Прочее"] = [
+  if (presetData) {
 
-      ...result["Прочее"],
+    Object.keys(
+      presetData
+    ).forEach((category) => {
 
-      ...PRESETS[preset]
+      if (!result[category]) {
+        result[category] = [];
+      }
 
-    ];
+      result[category] = [
+        ...result[category],
+        ...presetData[category]
+      ];
+
+    });
 
   }
 
   return result;
-
 };
 
 
@@ -258,6 +280,53 @@ const [tasks, setTasks] =
 
 }, [preset]);
 
+
+useEffect(() => {
+
+  const initial = {};
+  const currentData = buildData();
+
+  Object.keys(currentData).forEach((cat) => {
+
+    initial[cat] =
+      currentData[cat]
+      .map((t) => ({
+        text:
+          typeof t === "string"
+            ? t
+            : t.text,
+
+        links:
+          typeof t === "string"
+            ? []
+            : t.links || [],
+
+        done: false
+      }));
+
+  });
+
+  setTasks(initial);
+
+}, [preset]);
+
+useEffect(() => {
+
+  const collapsedInitial = {};
+
+  Object.keys(
+    buildData()
+  ).forEach((cat) => {
+
+    collapsedInitial[cat] = true;
+
+  });
+
+  setCollapsed(
+    collapsedInitial
+  );
+
+}, [preset]);
 
 useEffect(() => {
 
