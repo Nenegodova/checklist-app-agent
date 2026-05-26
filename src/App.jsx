@@ -285,6 +285,45 @@ const [tasks, setTasks] =
 
 }, [preset]);
 
+useEffect(() => {
+  const currentData = buildData();
+
+  setTasks((prev) => {
+    const next = {};
+
+    Object.keys(currentData).forEach((cat) => {
+      next[cat] = currentData[cat].map((t) => {
+        const text = typeof t === "string" ? t : t.text;
+        const links = typeof t === "string" ? [] : t.links || [];
+
+        // сохраняем done если уже есть
+        const old = prev?.[cat]?.find(x => x.text === text);
+
+        return {
+          text,
+          links,
+          done: old?.done ?? false
+        };
+      });
+    });
+
+    return next;
+  });
+}, [preset]);
+
+useEffect(() => {
+  const data = buildData();
+
+  setCollapsed((prev) => {
+    const next = {};
+
+    Object.keys(data).forEach((cat) => {
+      next[cat] = prev?.[cat] ?? true;
+    });
+
+    return next;
+  });
+}, [preset]);
 
 
  const [collapsed, setCollapsed] = useState(() => {
@@ -403,7 +442,7 @@ const hardReset = () => {
     }));
   };
 
-  const allTasks = Object.values(tasks).flat();
+const allTasks = Object.values(tasks ?? {}).flat();
   const doneTasks = allTasks.filter(t => t.done).length;
   const totalTasks = allTasks.length;
   const percent = totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
@@ -750,34 +789,35 @@ style={{
   }}
 >
   <div
-    style={{
-      ...ui.taskText,
-      textDecoration: task.done
-        ? "line-through"
-        : "none"
-    }}
-  >
-    {task.links?.length > 0 ? (
-  task.links.map((link) => (
+  style={{
+    ...ui.taskText,
+    textDecoration: task.done ? "line-through" : "none"
+  }}
+>
+  {task.text}
+
+  {task.links?.map((link) => (
     <a
       key={link.url}
       href={link.url}
       target="_blank"
       rel="noreferrer"
       style={{
-        color: dark ? "#7ab7ff" : "#2563eb",
+        marginLeft: 8,
+        display: "inline-flex",
+        padding: "2px 8px",
+        borderRadius: 999,
+        fontSize: 12,
         fontWeight: 600,
+        background: dark ? "#27272a" : "#eef2f7",
+        color: dark ? "#93c5fd" : "#2563eb",
         textDecoration: "none"
       }}
     >
       {link.label}
     </a>
-  ))
-) : (
-  task.text
-)}
-  </div>
-
+  ))}
+</div>
   {task.links?.length > 0 && (
     <div
       style={{
