@@ -28,6 +28,19 @@ const PRESETS = {
       "В подвале больших тестов прописаны авторы и источники",
       "Тег noads",
       "В больших тестах под обложкой указан иллюстратор"
+    ],
+
+    "Прочее": [
+      "В подвале больших тестов прописаны авторы и источники",
+         {
+    text: "",
+    links: [
+      {
+        label: "Методичка тесты",
+        url: "https://docs.google.com/document/d/1vBoENUtJI2UHtbBrLqVgPxuoEBE0yNvYhhATKmwiXzU/edit?tab=t.0#bookmark=id.sgzp2wu0gy8c"
+      }
+    ]
+  },
     ]
   },
 
@@ -114,12 +127,11 @@ const DATA = {
     text: "",
     links: [
       {
-        label: "Методички",
+        label: "Методички общие",
         url: "https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994"
       }
     ]
-  },
-
+  }, 
   "Проверить метку в кайтене об обновлении",
   "Проверить комментарии в кайтене",
   "В кайтен прикрепить ссылки на драфт и опенграф-картинку",
