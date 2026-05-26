@@ -200,16 +200,16 @@ const btn = {
   fontSize: 13
 };
 
-  const renderTextWithLinks = (text) => {
+ const renderTextWithLinks = (text) => {
   const regex =
-    /(\*[^*]+\*|\[([^\]]+)\]\((https?:\/\/[^)]+)\))/g;
+    /(\*[^*]+\*|\[[^\]]+\]\(https?:\/\/[^)]+\))/g;
 
   const parts = text.split(regex);
 
   return parts.map((part, i) => {
     if (!part) return null;
 
-    // жирный текст
+    // жирный
     if (
       part.startsWith("*") &&
       part.endsWith("*")
@@ -224,9 +224,9 @@ const btn = {
       );
     }
 
-    // кнопки-ссылки
+    // ссылка-кнопка
     const match = part.match(
-      /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/
+      /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/
     );
 
     if (match) {
