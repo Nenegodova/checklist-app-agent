@@ -439,12 +439,13 @@ export default function App() {
               {!collapsed[cat] && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {tasks[cat].map((task, i) => (
-                    <label key={i} style={ui.card}>
-                      <input
-                        type="checkbox"
-                        checked={task.done}
-                        onChange={() => toggle(cat, i)}
-                      />
+                    <label
+  key={i}
+  style={{
+    ...ui.card,
+    display: focusMode && task.done ? "none" : "flex"
+  }}
+>
                       <div style={ui.taskText}>
                         {task.text}
                       </div>
