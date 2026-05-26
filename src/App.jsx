@@ -593,33 +593,37 @@ const ui = {
             
           <select
   value={preset}
-onChange={(e) => {
-  localStorage.removeItem("checklist");
-  localStorage.removeItem("collapsed");
-  setPreset(e.target.value);
-}}
-style={{
-  ...btn,
-  minWidth: 140,
-  padding: "6px 36px 6px 12px",
-
-  appearance: "none",
-  WebkitAppearance: "none",
-  MozAppearance: "none",
-
-  backgroundImage: dark
-    ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
-    : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "right 12px center",
-  backgroundSize: "12px"
-}}
-  onFocus={(e) => {
-    e.target.style.borderColor = dark ? "#3f3f46" : "#9ca3af";
+  onChange={(e) => {
+    localStorage.removeItem("checklist");
+    localStorage.removeItem("collapsed");
+    setPreset(e.target.value);
   }}
-  onBlur={(e) => {
-    e.target.style.borderColor = dark ? "#2a2a2e" : "#d1d5db";
+  style={{
+    height: 34,
+    minWidth: 140,
+    padding: "0 36px 0 12px",
+
+    borderRadius: 10,
+    border: `1px solid ${dark ? "#2a2a2e" : "#d1d5db"}`,
+
+    background: dark ? "#18181b" : "#ffffff",
+    color: dark ? "#e8e8ea" : "#111827",
+
+    fontSize: 13,
+    cursor: "pointer",
+    outline: "none",
+
+    appearance: "none",
+    WebkitAppearance: "none",
+    MozAppearance: "none",
+
+    backgroundImage: dark
+      ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a1a1aa' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
+      : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23666' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 12px center",
+    backgroundSize: "12px"
   }}
 >
 
