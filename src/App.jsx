@@ -294,25 +294,29 @@ const ui = {
     gap: 16
   },
 
-  card: {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: 10,
-    padding: 14,
-    border: `1px solid ${border}`,
-    background: card,
-    textAlign: "left",
-    borderRadius: 12,
-    transition: "all 0.15s ease"
-  },
+ card: {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 10,
+  padding: "10px 12px",
+  border: `1px solid ${border}`,
+  background: card,
+  textAlign: "left",
+  borderRadius: 10,
+  transition: "all 0.15s ease",
 
-  taskText: {
-    flex: 1,
-    fontSize: 14,
-    lineHeight: "20px",
-    color: textColor,
-    textDecoration: "none"
-  }
+  boxShadow: dark
+    ? "0 1px 2px rgba(0,0,0,0.3)"
+    : "0 1px 2px rgba(0,0,0,0.05)"
+},
+
+ taskText: {
+  flex: 1,
+  fontSize: 13,
+  lineHeight: "18px",
+  color: textColor,
+  textDecoration: "none"
+}
 };
 
   return (
@@ -416,10 +420,18 @@ const ui = {
   }}
 >
                     <input
-                      type="checkbox"
-                      checked={task.done}
-                      onChange={() => toggle(cat, i)}
-                    />
+  type="checkbox"
+  checked={task.done}
+  onChange={() => toggle(cat, i)}
+  style={{
+    width: 16,
+    height: 16,
+    marginTop: 2,
+    accentColor: "#6b7280",
+    cursor: "pointer",
+    flexShrink: 0
+  }}
+/>
 
                     <span style={{
   ...ui.taskText,
