@@ -348,9 +348,6 @@ const [collapsed, setCollapsed] = useState(() => {
   );
 }, [collapsed]);
 
-  useEffect(() => {
-    localStorage.setItem("notes", notes);
-  }, [notes]);
 useEffect(() => {
   localStorage.setItem(
     "notesByTemplate",
@@ -445,7 +442,7 @@ const hardReset = () => {
   );
 
   setPreset("default");
-  setNotes("");
+
 
   const cleanData = buildTasks(DATA);
 
@@ -919,6 +916,7 @@ style={{
     key={key}
 onClick={() => {
   setNoteTemplate(key);
+  
   setNotesByTemplate((prev) => ({
     ...prev,
     [key]: prev[key] ?? NOTES_TEMPLATES[key]
@@ -1008,3 +1006,7 @@ onChange={(e) => {
 );
 }
   
+
+
+
+
