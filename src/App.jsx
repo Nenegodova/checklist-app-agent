@@ -950,7 +950,6 @@ style={{
       }[key]}
     </button>
   ))}
-  
 </div>
 
       <textarea
