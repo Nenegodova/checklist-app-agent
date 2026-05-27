@@ -2,8 +2,11 @@ import { useEffect, useState, useMemo } from "react";
 
 const DATA_VERSION = "1.1";
 
-const NOTES_TEMPLATE =
-`Вопросы к редакции:
+const NOTES_TEMPLATES = {
+  empty: "",
+
+  default:
+`Вопросы к редакции:
 
 —
 
@@ -11,13 +14,62 @@ const NOTES_TEMPLATE =
 
 —
 
-Поставить блокер:
+Блокеры:
 
 —
 
-Правки для фотореда/дизайнера:
+Фоторед:
 
-—`;
+—`,
+
+  tests:
+`Проверить:
+
+—
+
+Замечания по тесту:
+
+—
+
+Блокеры:
+
+—`,
+
+  invest:
+`Тикер:
+
+—
+
+Выдержка:
+
+—
+
+Замечания:
+
+—`,
+
+  shopping:
+`Пересчет цен:
+
+—
+
+Теги:
+
+—
+
+Замечания:
+
+—`,
+
+  compare:
+`Что сравнить:
+
+—
+
+Замечания:
+
+—`
+};
 
 const PRESETS = {
   default: {},
@@ -185,9 +237,25 @@ export default function App() {
 
   const [focusMode, setFocusMode] = useState(false);
 
-  const [notes, setNotes] = useState(() => {
-    return localStorage.getItem("notes") || "";
-  });
+const [noteTemplate, setNoteTemplate] = useState(
+  () => localStorage.getItem("noteTemplate") || "empty"
+);
+
+const [notesByTemplate, setNotesByTemplate] =
+useState(() => {
+  const saved =
+    localStorage.getItem("notesByTemplate");
+
+  return saved
+    ? JSON.parse(saved)
+    : Object.fromEntries(
+        Object.keys(NOTES_TEMPLATES)
+          .map((key) => [
+            key,
+            NOTES_TEMPLATES[key]
+          ])
+      );
+});
 
   const [notesOpen, setNotesOpen] = useState(false);
 
@@ -237,6 +305,8 @@ const [collapsed, setCollapsed] = useState(() => {
     localStorage.setItem("preset", preset);
   }, [preset]);
 
+  
+
   // rebuild tasks safely
   useEffect(() => {
     setTasks((prev) => {
@@ -272,8 +342,29 @@ const [collapsed, setCollapsed] = useState(() => {
   }, [collapsed]);
 
   useEffect(() => {
+  localStorage.setItem(
+    "collapsed",
+    JSON.stringify(collapsed)
+  );
+}, [collapsed]);
+
+  useEffect(() => {
     localStorage.setItem("notes", notes);
   }, [notes]);
+useEffect(() => {
+  localStorage.setItem(
+    "notesByTemplate",
+    JSON.stringify(notesByTemplate)
+  );
+}, [notesByTemplate]);
+
+useEffect(() => {
+  localStorage.setItem(
+    "noteTemplate",
+    noteTemplate
+  );
+}, [noteTemplate]);
+
 
 const toggle = (cat, index) => {
   setTasks((prev) => {
@@ -814,62 +905,67 @@ style={{
         Заметки
       </div>
 
-      <div
+
+<div
   style={{
     display: "flex",
-    gap: 8,
-    marginBottom: 10
+    gap: 6,
+    flexWrap: "wrap",
+    marginBottom: 12
   }}
 >
+  {Object.keys(NOTES_TEMPLATES).map((key) => (
   <button
-    onClick={() => {
-      if (!notes.trim()) {
-        setNotes(NOTES_TEMPLATE);
-      }
-    }}
+    key={key}
+onClick={() => {
+  setNoteTemplate(key);
+  setNotesByTemplate((prev) => ({
+    ...prev,
+    [key]: prev[key] ?? NOTES_TEMPLATES[key]
+  }));
+}}
     style={{
-      padding: "6px 10px",
-      borderRadius: 10,
       border: "none",
+      cursor: "pointer",
+      padding: "6px 10px",
+      borderRadius: 999,
 
-      background: dark
-        ? "#27272a"
-        : "#eef2f7",
+      background:
+        noteTemplate === key
+          ? "#6b7280"
+          : dark
+          ? "#27272a"
+          : "#e5e7eb",
 
-      color: textColor,
-      fontSize: 12,
-      cursor: "pointer"
+      color:
+        noteTemplate === key
+          ? "#fff"
+          : textColor
     }}
   >
-    Вставить шаблон
+    {{
+      empty: "Пусто",
+      default: "База",
+      tests: "Тест",
+      invest: "Инвест",
+      shopping: "Шопинг",
+      compare: "Сравнятор"
+    }[key]}
   </button>
+))}
 
-  <button
-    onClick={() => setNotes("")}
-    style={{
-      padding: "6px 10px",
-      borderRadius: 10,
-      border: "none",
-
-      background: dark
-        ? "#3a1f1f"
-        : "#fee2e2",
-
-      color: dark
-        ? "#fca5a5"
-        : "#991b1b",
-
-      fontSize: 12,
-      cursor: "pointer"
-    }}
-  >
-    Очистить
-  </button>
 </div>
 
       <textarea
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
+        value={notesByTemplate[noteTemplate]}
+onChange={(e) => {
+  const value = e.target.value;
+
+  setNotesByTemplate((prev) => ({
+    ...prev,
+    [noteTemplate]: value
+  }));
+}}
         placeholder="Заметки по ходу проверки: вопросы, правки и всё, что ​не хочется потерять — можно записывать сюда, чтобы не держать в голове"
         style={{
           width: "100%",
@@ -912,7 +1008,6 @@ style={{
 );
 }
   
-
 
 
 
