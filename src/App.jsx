@@ -131,6 +131,17 @@ shopping: {
       { text: "Дескрипшн внутри тега *p grade=”small”*"},
       { text: "Дискрипшен находится внутри <tiles></tiles>."},
       { text: "В конце список из 3–4 ссылок выстроен «лесенкой» если позволяет смысл. Вводное предложение — без жирного выделения" }
+    ],
+
+    "Прочее": [
+      {
+        links: [
+          {
+            label: "Методичка шорты",
+            url: "https://docs.google.com/document/d/1jrBvNKW0AVHAPY4ogI-4i3GEoqIbfiN1TIIuk4fwdig/edit?tab=t.0"
+          }
+        ]
+      }
     ]
   },
         ugc: {
@@ -733,7 +744,7 @@ const ui = {
     </option>
 
           <option value="shorts">
-      Шортв
+      Шорты
     </option>
 
       <option value="ugc">
