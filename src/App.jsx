@@ -32,7 +32,8 @@ const PRESETS = {
   shopping: {
     "Админка": [
       { text: "Напоминание о пересчете цен" },
-      { text: "Тег noads" }
+      { text: "Тег noads" },
+      { text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точказапятая кроме последней" },
     ]
   },
 
@@ -73,7 +74,18 @@ const PRESETS = {
     "Админка": [
       { text: "Нажата кнопка из сообщества" }
     ]
-  }
+  },
+
+      cd: {
+    "Админка": [
+      { text: "Тег noads" }
+    ]
+  },
+        ugc: {
+    "Админка": [
+      { text: "Тег noads" }
+    ]
+  },
 };
 
 const DATA = {
@@ -91,7 +103,6 @@ const DATA = {
     { text: "Проверить метку разметка, если есть доп. авторы" },
     { text: "Подпись автора с маленькой буквы" },
     { text: "Лид на месте, в конце точка" },
-    { text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точказапятая кроме последней" },
     { text: "Якоря в оглавлении стоят верно. Двоеточие в оглавлении убрать" },
     { text: "Внутри склеяны *&nbsp;* слова с частицами бы, же, ли, числа, которые идут после того, что считаем (минут 15, iPhone 16), аббревиатуры-дополнения (страны ЕС, ставка ЦБ)" },
     { text: "После эмодзи в загах пробел" },
@@ -180,6 +191,28 @@ const buildTasks = (data) => {
   return initial;
 };
 
+
+const readStorageJSON = (key) => {
+  const value = localStorage.getItem(key);
+
+  if (!value) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    console.warn(
+      `Повреждены данные localStorage: ${key}`,
+      error
+    );
+
+    localStorage.removeItem(key);
+
+    return null;
+  }
+};
+
 export default function App() {
   const [dark, setDark] = useState(false);
 
@@ -211,27 +244,29 @@ export default function App() {
 
 const [tasks, setTasks] = useState(() => {
   const savedVersion = localStorage.getItem("version");
-  const saved = localStorage.getItem("checklist");
+  const saved = readStorageJSON("checklist");
 
   if (savedVersion !== DATA_VERSION) {
     localStorage.removeItem("checklist");
     localStorage.removeItem("collapsed");
     localStorage.setItem("version", DATA_VERSION);
+
+    return buildTasks(currentData);
   }
 
   if (saved) {
-    return JSON.parse(saved);
+    return saved;
   }
 
   return buildTasks(currentData);
 });
 
 const [collapsed, setCollapsed] = useState(() => {
-  const saved =
-    localStorage.getItem("collapsed");
+const saved =
+  readStorageJSON("collapsed");
 
   if (saved) {
-    return JSON.parse(saved);
+return saved;
   }
 
   return buildCollapsed(currentData);
@@ -625,12 +660,12 @@ const ui = {
       Дневник трат
     </option>
 
-      <option value="spending">
+      <option value="cd">
       ЧД
     </option>
 
-      <option value="spending">
-      UGС
+      <option value="ugc">
+      UGC
     </option>
   </select>
 
