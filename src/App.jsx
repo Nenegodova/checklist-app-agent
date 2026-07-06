@@ -104,7 +104,7 @@ shopping: {
 
   spending: {
      "Текст": [
-      { text: "В начале статьи стоит плашка с абзацами grade=”secondary”"},
+      { text: "В начале статьи стоит плашка с абзацами *p grade=”secondary”*"},
       { text: "У авторов стоят аноминмые аватарки anonym_male у мужчин и anonym_female у женщин, автор стоит после оглавления"},
       { text: "Траты обозначены *class=”negative”*" },
       { text: "Доходы обозначены *class=”positive”*" },
@@ -884,6 +884,7 @@ const ui = {
 >
   <div
     style={{
+      alignItems: "right",
       fontSize: 12,
       fontWeight: 600,
       color: mutedColor,
@@ -895,6 +896,7 @@ const ui = {
 
   <div
     style={{
+     alignItems: "right",
       display: "flex",
       flexWrap: "wrap",
       gap: 6
@@ -1009,7 +1011,7 @@ const ui = {
   checked={task.done}
   onChange={() => toggle(cat, i)}
 style={{
-  alignItems: "right",
+
   width: 16,
   height: 16,
   marginTop: 2,
