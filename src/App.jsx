@@ -875,16 +875,16 @@ const ui = {
 <div
  style={{
   width: "100%",
-  marginTop: 18,
-  marginBottom: 32
+  marginTop: 12,
+  marginBottom: 18
 }}
 >
   <div
     style={{
-      fontSize: 13,
+      fontSize: 12,
       fontWeight: 600,
       color: mutedColor,
-      marginBottom: 8
+      marginBottom: 6
     }}
   >
     Материал содержит
@@ -894,7 +894,7 @@ const ui = {
     style={{
       display: "flex",
       flexWrap: "wrap",
-      gap: 8
+      gap: 6
     }}
   >
     {Object.entries(CONTENT_FILTERS).map(
@@ -910,6 +910,10 @@ const ui = {
           }
           style={{
             ...btn,
+
+             height: 28,
+  padding: "4px 10px",
+  fontSize: 12,
 
             background:
               contentFilters[key]
