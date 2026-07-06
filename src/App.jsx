@@ -876,11 +876,7 @@ const ui = {
  style={{
   width: "100%",
   marginTop: 18,
-  marginBottom: 32,
-  padding: 16,
-  borderRadius: 12,
-  border: `1px solid ${border}`,
-  background: card
+  marginBottom: 32
 }}
 >
   <div
