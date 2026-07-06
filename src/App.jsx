@@ -887,7 +887,7 @@ const ui = {
       marginBottom: 6
     }}
   >
-    Материал содержит
+    Контент
   </div>
 
   <div
@@ -1006,6 +1006,7 @@ const ui = {
   checked={task.done}
   onChange={() => toggle(cat, i)}
 style={{
+  alignItems: "right",
   width: 16,
   height: 16,
   marginTop: 2,
