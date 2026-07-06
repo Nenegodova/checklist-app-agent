@@ -908,17 +908,18 @@ style={{
   alignItems: "flex-end"
 }}
 >
-  <div
-
-style={{
-      fontSize: 12,
-      fontWeight: 600,
-      color: mutedColor,
-      marginBottom: 6
-    }}
-  >
-    Контент
-  </div>
+<div
+  style={{
+    width: "100%",
+    fontSize: 12,
+    fontWeight: 600,
+    color: mutedColor,
+    marginBottom: 6,
+    textAlign: "center"
+  }}
+>
+  Контент
+</div>
 
   <div
 
