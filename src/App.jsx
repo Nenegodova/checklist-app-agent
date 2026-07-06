@@ -760,10 +760,11 @@ const ui = {
         {/* HEADER FIXED */}
 <div style={{
   display: "flex",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
-  gap: 24,
-  marginBottom: 20
+  flexDirection: "column",
+  alignItems: isMobile ? "center" : "flex-end",
+  gap: 12,
+  marginLeft: isMobile ? 0 : "auto",
+  width: isMobile ? "100%" : "auto"
 }}>
 
           
@@ -792,7 +793,7 @@ const ui = {
       display: "flex",
       gap: 10,
       flexWrap: "wrap",
-      justifyContent: "flex-end"
+      justifyContent: isMobile ? "center" : "flex-end"
     }}
   >
             <button style={btn} onClick={() => setDark(v => !v)}>Тема</button>
