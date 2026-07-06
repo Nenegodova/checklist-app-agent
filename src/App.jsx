@@ -758,17 +758,16 @@ const ui = {
 
 
         {/* HEADER FIXED */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 12,
-          marginBottom: 20
-        }}>
+<div style={{
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  gap: 24,
+  marginBottom: 20
+}}>
 
           
-          <div style={{ flex: 1, textAlign: "center" }}>
+       <div style={{ flexShrink: 0 }}>
   <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700, color: title }}>
     Чек-лист проверки
   </h1>
@@ -783,7 +782,8 @@ const ui = {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-end",
-    gap: 12
+    gap: 12,
+    marginLeft: "auto"
   }}
 >
 
