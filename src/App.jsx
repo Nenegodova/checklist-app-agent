@@ -1,4 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+import {
+  useEffect,
+  useState,
+  useMemo
+} from "react";
 
 const DATA_VERSION = "1.1";
 
@@ -370,6 +374,45 @@ const readStorageJSON = (key) => {
   }
 };
 
+
+function useMediaQuery(query) {
+  const getMatches = () => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.matchMedia(query).matches;
+  };
+
+  const [matches, setMatches] = useState(getMatches);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+
+    const handler = (e) => {
+      setMatches(e.matches);
+    };
+
+    if (media.addEventListener) {
+      media.addEventListener("change", handler);
+    } else {
+      media.addListener(handler);
+    }
+
+    setMatches(media.matches);
+
+    return () => {
+      if (media.removeEventListener) {
+        media.removeEventListener("change", handler);
+      } else {
+        media.removeListener(handler);
+      }
+    };
+  }, [query]);
+
+  return matches;
+}
+
 export default function App() {
   const [dark, setDark] = useState(false);
 
@@ -601,7 +644,7 @@ const hardReset = () => {
   const percent =
     totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
 
- const isMobile = window.innerWidth < 900;
+const isMobile = useMediaQuery("(max-width: 900px)");
   const textColor = dark ? "#e8e8ea" : "#111";
   const mutedColor = dark ? "#a1a1aa" : "#555";
 const card = dark ? "#18181b" : "#ffffff";
