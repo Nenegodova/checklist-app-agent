@@ -601,7 +601,7 @@ const hardReset = () => {
   const percent =
     totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
 
- 
+ const isMobile = window.innerWidth < 900;
   const textColor = dark ? "#e8e8ea" : "#111";
   const mutedColor = dark ? "#a1a1aa" : "#555";
 const card = dark ? "#18181b" : "#ffffff";
@@ -758,14 +758,18 @@ const ui = {
 
 
         {/* HEADER FIXED */}
-<div style={{
-  display: "flex",
-  flexDirection: "column",
-  alignItems: isMobile ? "center" : "flex-end",
-  gap: 12,
-  marginLeft: isMobile ? 0 : "auto",
-  width: isMobile ? "100%" : "auto"
-}}>
+{/* HEADER FIXED */}
+<div
+  style={{
+    display: "flex",
+    flexDirection: isMobile ? "column" : "row",
+    justifyContent: "space-between",
+    alignItems: isMobile ? "center" : "flex-start",
+    gap: 24,
+    marginBottom: 24
+  }}
+>
+
 
           
        <div style={{ flexShrink: 0 }}>
@@ -782,19 +786,21 @@ const ui = {
   style={{
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-end",
+    alignItems: isMobile ? "center" : "flex-end",
     gap: 12,
-    marginLeft: "auto"
+    width: isMobile ? "100%" : "auto",
+    marginLeft: isMobile ? 0 : "auto"
   }}
 >
 
   <div
-    style={{
-      display: "flex",
-      gap: 10,
-      flexWrap: "wrap",
-      justifyContent: isMobile ? "center" : "flex-end"
-    }}
+   style={{
+    display: "flex",
+    gap: 10,
+    flexWrap: "wrap",
+    justifyContent: isMobile ? "center" : "flex-end",
+    width: "100%"
+}}
   >
             <button style={btn} onClick={() => setDark(v => !v)}>Тема</button>
             
@@ -901,12 +907,13 @@ const ui = {
             </button>
           </div>
 
-          <div
+         <div
 style={{
   marginTop: 14,
   display: "flex",
   flexDirection: "column",
-  alignItems: "flex-end"
+  alignItems: isMobile ? "center" : "flex-end",
+  width: "100%"
 }}
 >
 <div
@@ -922,14 +929,14 @@ style={{
   Контент
 </div>
 
-  <div
-
-style={{
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 6
-    }}
-  >
+<div
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 6,
+    justifyContent: isMobile ? "center" : "flex-end"
+  }}
+>
     {Object.entries(CONTENT_FILTERS).map(
       ([key, item]) => (
         <button
