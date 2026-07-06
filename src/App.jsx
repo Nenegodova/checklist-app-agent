@@ -872,10 +872,11 @@ const ui = {
         </div>
 
 
- <div
+<div
   style={{
     width: "100%",
-    marginTop: 14
+    marginTop: 18,
+    marginBottom: 32
   }}
 >
   <div
