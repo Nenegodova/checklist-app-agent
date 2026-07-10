@@ -100,3 +100,75 @@ small,
 .subtitle{
     color:#9CA3AF;
 }
+/* ---------- Design System ---------- */
+
+:root {
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+}
+
+body {
+  background:
+    radial-gradient(circle at top, rgba(255,221,45,.05), transparent 45%),
+    #111315;
+}
+
+/* Основной контейнер */
+.app,
+.container,
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Все основные блоки */
+.card,
+.task-card,
+.section,
+.panel {
+  background: #1A1D21;
+  border: 1px solid #2B3038;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  transition: all .2s ease;
+}
+
+.card:hover,
+.task-card:hover {
+  border-color: rgba(255,221,45,.45);
+  transform: translateY(-2px);
+}
+
+/* Кнопки */
+button {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 14px;
+  font-weight: 600;
+}
+
+button:not(:disabled):hover {
+  box-shadow: 0 0 0 4px rgba(255,221,45,.12);
+}
+
+/* Поля */
+input,
+textarea,
+select {
+  transition: .2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 3px rgba(255,221,45,.18);
+}
+
+/* Плавность */
+* {
+  transition:
+    background-color .18s ease,
+    border-color .18s ease,
+    color .18s ease;
+}
