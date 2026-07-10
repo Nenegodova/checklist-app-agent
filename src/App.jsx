@@ -643,11 +643,11 @@ const hardReset = () => {
 const isMobile = useMediaQuery("(max-width: 900px)");
   const textColor = dark ? "#e8e8ea" : "#111";
   const mutedColor = dark ? "#a1a1aa" : "#555";
-const card = dark ? "#18181b" : "#ffffff";
-const border = dark ? "#2a2a2e" : "#e5e7eb";
-  const bg = dark ? "#0f0f10" : "#f5f5f7";
-  const title = dark ? "#ffffff" : "#0a0a0a";
-const category = dark ? "#e5e7eb" : "#111827";
+const card = dark ? "#1A1D21" : "#ffffff";
+const border = dark ? "#2F343C" : "#E5E7EB";
+const bg = dark ? "#111315" : "#F6F7F9";
+const title = dark ? "#FFFFFF" : "#111827";
+const category = dark ? "#F3F4F6" : "#111827";
 const controlBase = {
   height: 34,
   padding: "6px 12px",
@@ -669,7 +669,7 @@ const controlBase = {
 const makeControl = (dark) => ({
   ...controlBase,
   border: `1px solid ${dark ? "#2a2a2e" : "#d1d5db"}`,
-  background: dark ? "#18181b" : "#ffffff",
+  background: dark ? "#1A1D21" : "#ffffff",
   color: dark ? "#e8e8ea" : "#111827"
 });
 
@@ -759,11 +759,11 @@ const ui = {
   display: "flex",
   alignItems: "flex-start",
   gap: 10,
-  padding: "10px 12px",
+  padding: "16px 18px",
   border: `1px solid ${border}`,
   background: card,
   textAlign: "left",
-  borderRadius: 10,
+  borderRadius: 18,
   transition: "all 0.15s ease",
 
   boxShadow: dark
@@ -998,16 +998,22 @@ style={{
   padding: "4px 10px",
   fontSize: 12,
 
-            background:
-              contentFilters[key]
-                ? dark
-                  ? "#2d3748"
-                  : "#dbeafe"
-                : dark
-                  ? "#18181b"
-                  : "#fff",
+background:
+  contentFilters[key]
+    ? "#FFDD2D"
+    : dark
+      ? "#1A1D21"
+      : "#fff",
 
-            color: textColor,
+color:
+  contentFilters[key]
+    ? "#111"
+    : textColor,
+
+border:
+  contentFilters[key]
+    ? "1px solid #FFDD2D"
+    : `1px solid ${border}`,
 
             fontWeight:
               contentFilters[key]
@@ -1284,11 +1290,11 @@ style={{
       height: 58,
       borderRadius: "50%",
       border: "none",
-      background: "#c0c0c8",
-      color: "#fff",
+background:"#FFDD2D",
+color:"#111",
+boxShadow:"0 12px 32px rgba(255,221,45,.35)",
       fontSize: 22,
-      cursor: "pointer",
-      boxShadow: "0 8px 24px rgba(112, 114, 118, 0.35)"
+      cursor: "pointer"
     }}
   >
     ✍️
