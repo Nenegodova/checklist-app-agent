@@ -128,14 +128,14 @@ shopping: {
 
      "Админка": [
        { 
-      _sortOrder: 1, 
+      _sortOrder: 0, 
        text: "В классических ЧД нет подзага" },
       { 
-        _sortOrder: 2, 
+        _sortOrder: 1, 
         text: "В подборке ЧД есть подзаг" },  
       { text: "Обложка с эмодзи с типом мейна «мини над заголовком»" }, 
       {
-        _sortOrder: 2, 
+        _sortOrder: 3, 
         text: "Редакция Что делать + тематическая" },
       { text: "Нажаты кнопки из сообщества и выбор редакции" },
       { text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог-описания" },
@@ -514,13 +514,13 @@ const currentData = useMemo(() => {
     Object.keys(presetData).forEach((cat) => {
       if (!result[cat]) result[cat] = [];
 
-      // 1. Базовые элементы сохраняют свой исходный индекс как default-порядок
+      // 1. Базовым элементам присваиваем их исходный индекс
       const baseItems = result[cat].map((item, i) => ({
         ...item,
         _sortOrder: item._sortOrder ?? i
       }));
 
-      // 2. Элементы пресета: если sortOrder не указан вручную, они уйдут в конец (9999)
+      // 2. Элементам пресета даём высокий порядок по умолчанию, если не указан явно
       const presetItems = presetData[cat].map(item => ({
         ...item,
         _sortOrder: item._sortOrder ?? 9999
@@ -532,7 +532,7 @@ const currentData = useMemo(() => {
       );
     });
   } else {
-    // Если пресет не выбран, просто гарантируем наличие _sortOrder в базе
+    // Для дефолтного режима тоже приводим к единому виду
     Object.keys(result).forEach((cat) => {
       result[cat] = result[cat].map((item, i) => ({
         ...item,
