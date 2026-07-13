@@ -499,7 +499,7 @@ export default function App() {
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12, marginLeft: "auto", flex: "0 1 520px" }}>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-end", width: "100%" }}>
               <button type="button" style={btn} onClick={() => setDark((v) => !v)}>
-                {dark ? "☀️ Светлая тема" : "🌙 Тёмная тема"}
+                {dark ? "☀️" : "🌙"}
               </button>
               <div style={{ position: "relative" }}>
                 <select value={preset} onChange={(e) => { localStorage.removeItem("checklist"); localStorage.removeItem("collapsed"); setPreset(e.target.value); }}
