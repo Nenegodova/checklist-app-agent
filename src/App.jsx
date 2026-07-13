@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useLayoutEffect } from "react";
 
 const DATA_VERSION = "1.1";
 const NOTES_TEMPLATE =
@@ -258,40 +258,94 @@ const buildTasks = (data) => {
 function useMediaQuery(query) {
   const getMatches = () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false);
   const [matches, setMatches] = useState(getMatches);
-
   useEffect(() => {
     const media = window.matchMedia(query);
     const handler = (e) => setMatches(e.matches);
     media.addEventListener("change", handler);
     return () => media.removeEventListener("change", handler);
   }, [query]);
-
   return matches;
 }
 
+// Исправлено: стабильные key через счетчик вместо индекса split-массива
+const renderTextWithLinks = (text, dark) => {
+  if (!text) return null;
+  const parts = text.split(/(\*[^*]+\*|\[[^\]]+\]\(https?:\/\/[^)]+\))/g);
+  let keyIdx = 0;
+  return parts.map((part) => {
+    if (!part) return null;
+    if (part.startsWith("*") && part.endsWith("*")) {
+      return <strong key={keyIdx++} style={{ fontWeight: 700 }}>{part.slice(1, -1)}</strong>;
+    }
+    const match = part.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
+    if (match) {
+      const [, label, url] = match;
+      return (
+        <a key={keyIdx++} href={url} target="_blank" rel="noreferrer"
+           style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", marginLeft: 6,
+             borderRadius: 8, background: dark ? "#33334b" : "#e8e8ea", color: dark ? "#7ab7ff" : "#2563eb",
+             textDecoration: "none", fontSize: 13, fontWeight: 500 }}
+        >{label}</a>
+      );
+    }
+    return <span key={keyIdx++}>{part}</span>;
+  });
+};
+
 // --- Component ---
 export default function App() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => {
+    try {
+      const saved = localStorage.getItem("dark");
+      if (saved !== null) return saved === "true";
+      return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } catch {
+      return false;
+    }
+  });
+
+  // Живое отслеживание системной темы (если пользователь не переключал вручную)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e) => {
+      if (localStorage.getItem("dark") === null) {
+        setDark(e.matches);
+      }
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   const [preset, setPreset] = useState(() => localStorage.getItem("preset") || "default");
   const [contentFilters, setContentFilters] = useState(() => readStorageJSON("contentFilters") || buildContentFilters());
   const [focusMode, setFocusMode] = useState(false);
   const [notes, setNotes] = useState(() => localStorage.getItem("notes") || "");
   const [notesOpen, setNotesOpen] = useState(false);
 
-  const currentData = useMemo(() => {
-    const result = JSON.parse(JSON.stringify(DATA));
-    const presetData = PRESETS[preset];
+  // Синхронизация темы с DOM и localStorage (безопасная, без лишних записей)
+  useLayoutEffect(() => {
+    document.documentElement.className = dark ? "dark" : "";
+    const currentValue = localStorage.getItem("dark");
+    if (currentValue !== String(dark)) {
+      localStorage.setItem("dark", dark);
+    }
+  }, [dark]);
 
+  const currentData = useMemo(() => {
+    const clone = typeof structuredClone === "function" ? structuredClone(DATA) : JSON.parse(JSON.stringify(DATA));
+    const presetData = PRESETS[preset];
+    
     if (presetData) {
       Object.keys(presetData).forEach((cat) => {
-        if (!result[cat]) result[cat] = [];
-        const baseItems = result[cat].map((item, i) => ({ ...item, _sortOrder: item._sortOrder ?? i }));
+        if (!clone[cat]) clone[cat] = [];
+        const baseItems = clone[cat].map((item, i) => ({ ...item, _sortOrder: item._sortOrder ?? i }));
         const presetItems = presetData[cat].map((item) => ({ ...item, _sortOrder: item._sortOrder ?? 9999 }));
-        result[cat] = [...baseItems, ...presetItems].sort((a, b) => (a._sortOrder ?? Infinity) - (b._sortOrder ?? Infinity));
+        clone[cat] = [...baseItems, ...presetItems].sort((a, b) => (a._sortOrder ?? Infinity) - (b._sortOrder ?? Infinity));
       });
     } else {
-      Object.keys(result).forEach((cat) => {
-        result[cat] = result[cat]
+      Object.keys(clone).forEach((cat) => {
+        clone[cat] = clone[cat]
           .map((item, i) => ({ ...item, _sortOrder: item._sortOrder ?? i }))
           .sort((a, b) => (a._sortOrder ?? Infinity) - (b._sortOrder ?? Infinity));
       });
@@ -300,17 +354,19 @@ export default function App() {
     const excludes = PRESET_EXCLUDES[preset];
     if (excludes) {
       Object.entries(excludes).forEach(([cat, ids]) => {
-        if (!result[cat]) return;
-        result[cat] = result[cat].filter((item) => !ids.includes(item.id));
+        if (!clone[cat]) return;
+        clone[cat] = clone[cat].filter((item) => {
+          const itemId = item.id || item.text;
+          return !ids.includes(itemId);
+        });
       });
     }
-    return result;
+    return clone;
   }, [preset]);
 
   const [tasks, setTasks] = useState(() => {
     const savedVersion = localStorage.getItem("version");
     const saved = readStorageJSON("checklist");
-
     if (savedVersion !== DATA_VERSION) {
       localStorage.removeItem("checklist");
       localStorage.removeItem("collapsed");
@@ -322,16 +378,13 @@ export default function App() {
 
   const [collapsed, setCollapsed] = useState(() => readStorageJSON("collapsed") || buildCollapsed(currentData));
 
-  // Safe localStorage sync
   useEffect(() => {
-    localStorage.setItem("preset", preset);
     localStorage.setItem("contentFilters", JSON.stringify(contentFilters));
     localStorage.setItem("checklist", JSON.stringify(tasks));
     localStorage.setItem("collapsed", JSON.stringify(collapsed));
     localStorage.setItem("notes", notes);
-  }, [preset, contentFilters, tasks, collapsed, notes]);
+  }, [contentFilters, tasks, collapsed, notes]);
 
-  // Rebuild tasks on data/preset change without losing state
   useEffect(() => {
     setTasks((prev) => {
       const next = {};
@@ -353,25 +406,28 @@ export default function App() {
   const toggle = useCallback((cat, index) => {
     setTasks((prev) => {
       const updated = prev[cat].map((t, i) => (i === index ? { ...t, done: !t.done } : t));
-      const nextTasks = { ...prev, [cat]: updated };
-
-      if (updated.every((t) => t.done)) {
-        setCollapsed((old) => {
-          const next = { ...old, [cat]: true };
-          const categories = Object.keys(nextTasks);
-          const currentIndex = categories.indexOf(cat);
-          for (let i = currentIndex + 1; i < categories.length; i++) {
-            if (nextTasks[categories[i]].some((t) => !t.done)) {
-              next[categories[i]] = false;
-              break;
-            }
-          }
-          return next;
-        });
-      }
-      return nextTasks;
+      return { ...prev, [cat]: updated };
     });
   }, []);
+
+  useEffect(() => {
+    setCollapsed((prev) => {
+      let next = { ...prev };
+      const cats = Object.keys(tasks);
+      const lastDoneCat = [...cats].reverse().find(cat => tasks[cat]?.every(t => t.done));
+      if (lastDoneCat) {
+        next[lastDoneCat] = true;
+        const idx = cats.indexOf(lastDoneCat);
+        for (let i = idx + 1; i < cats.length; i++) {
+          if (tasks[cats[i]]?.some(t => !t.done)) {
+            next[cats[i]] = false;
+            break;
+          }
+        }
+      }
+      return next;
+    });
+  }, [tasks]);
 
   const resetAll = useCallback(() => {
     setTasks((prev) => {
@@ -384,13 +440,13 @@ export default function App() {
   }, []);
 
   const hardReset = useCallback(() => {
-    ["preset", "notes", "checklist", "collapsed", "contentFilters", "version"].forEach((key) => localStorage.removeItem(key));
+    ["preset", "notes", "checklist", "collapsed", "contentFilters", "version", "dark"].forEach((key) => localStorage.removeItem(key));
     localStorage.setItem("version", DATA_VERSION);
-
     setPreset("default");
     setContentFilters(buildContentFilters());
     setNotes("");
     setFocusMode(false);
+    setDark(false);
     setTasks(buildTasks(DATA));
     setCollapsed(buildCollapsed(DATA));
   }, []);
@@ -403,8 +459,8 @@ export default function App() {
   const doneTasks = allTasks.filter((t) => t.done).length;
   const totalTasks = allTasks.length;
   const percent = totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
+  
   const isMobile = useMediaQuery("(max-width: 900px)");
-
   const textColor = dark ? "#e8e8ea" : "#111";
   const mutedColor = dark ? "#a1a1aa" : "#555";
   const card = dark ? "#1A1D21" : "#ffffff";
@@ -412,40 +468,20 @@ export default function App() {
   const bg = dark ? "#111315" : "#F6F7F9";
   const title = dark ? "#FFFFFF" : "#111827";
   const category = dark ? "#F3F4F6" : "#111827";
-
+  
   const controlBase = {
     height: 34, padding: "6px 12px", borderRadius: 10, fontSize: 13, lineHeight: "20px",
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     cursor: "pointer", transition: "all 0.15s ease", boxShadow: "none", outline: "none",
   };
+  
   const makeControl = (isDark) => ({
     ...controlBase, border: `1px solid ${isDark ? "#2a2a2e" : "#d1d5db"}`,
     background: isDark ? "#1A1D21" : "#ffffff", color: isDark ? "#e8e8ea" : "#111827",
   });
+  
   const btn = makeControl(dark);
-
-  const renderTextWithLinks = (text) => {
-    const regex = /(\*[^*]+\*|\[[^\]]+\]\(https?:\/\/[^)]+\))/g;
-    return text.split(regex).map((part, i) => {
-      if (!part) return null;
-      if (part.startsWith("*") && part.endsWith("*")) {
-        return <strong key={i} style={{ fontWeight: 700 }}>{part.slice(1, -1)}</strong>;
-      }
-      const match = part.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
-      if (match) {
-        const [, label, url] = match;
-        return (
-          <a key={i} href={url} target="_blank" rel="noreferrer"
-             style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", marginLeft: 6,
-               borderRadius: 8, background: dark ? "#33334b" : "#e8e8ea", color: dark ? "#7ab7ff" : "#2563eb",
-               textDecoration: "none", fontSize: 13, fontWeight: 500 }}
-          >{label}</a>
-        );
-      }
-      return <span key={i}>{part}</span>;
-    });
-  };
-
+  
   const ui = {
     categoryTitle: { cursor: "pointer", marginBottom: 12, fontSize: 15, fontWeight: 600, color: category, display: "flex", alignItems: "center", gap: 16 },
     card: { display: "flex", alignItems: "flex-start", gap: 10, padding: "16px 18px", border: `1px solid ${border}`, background: card, textAlign: "left", borderRadius: 18, transition: "all 0.15s ease", boxShadow: dark ? "0 1px 2px rgba(0,0,0,0.3)" : "0 1px 2px rgba(0,0,0,0.05)" },
@@ -462,7 +498,9 @@ export default function App() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12, marginLeft: "auto", flex: "0 1 520px" }}>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-end", width: "100%" }}>
-              <button style={btn} onClick={() => setDark((v) => !v)}>Тема</button>
+              <button type="button" style={btn} onClick={() => setDark((v) => !v)}>
+                {dark ? "☀️ Светлая тема" : "🌙 Тёмная тема"}
+              </button>
               <div style={{ position: "relative" }}>
                 <select value={preset} onChange={(e) => { localStorage.removeItem("checklist"); localStorage.removeItem("collapsed"); setPreset(e.target.value); }}
                   style={{ height: 34, minWidth: 140, padding: "0 36px 0 12px", borderRadius: 10, border: `1px solid ${dark ? "#2a2a2e" : "#d1d5db"}`, background: dark ? "#18181b" : "#ffffff", color: dark ? "#e8e8ea" : "#111827", fontSize: 13, cursor: "pointer", outline: "none", appearance: "none", WebkitAppearance: "none", MozAppearance: "none" }}>
@@ -470,9 +508,9 @@ export default function App() {
                 </select>
                 <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", fontSize: 10, color: dark ? "#a1a1aa" : "#666" }}>▼</span>
               </div>
-              <button style={btn} onClick={resetAll}>Сброс</button>
-              <button style={btn} onClick={() => setFocusMode((v) => !v)}>{focusMode ? "Фокус: ON" : "Фокус: OFF"}</button>
-              <button style={{ ...btn, color: "red" }} onClick={hardReset}>RESET</button>
+              <button type="button" style={btn} onClick={resetAll}>Сброс</button>
+              <button type="button" style={btn} onClick={() => setFocusMode((v) => !v)}>{focusMode ? "Фокус: ON" : "Фокус: OFF"}</button>
+              <button type="button" style={{ ...btn, color: "red" }} onClick={hardReset}>RESET</button>
             </div>
             <div style={{ marginTop: 14, display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-end", width: "100%" }}>
               <div style={{ width: "100%", fontSize: 12, fontWeight: 600, color: mutedColor, marginBottom: 6, textAlign: "center" }}>Контент</div>
@@ -487,7 +525,6 @@ export default function App() {
             </div>
           </div>
         </div>
-
         {Object.keys(tasks).map((cat) => (
           <div key={cat} style={{ marginBottom: 20 }}>
             <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
@@ -506,7 +543,7 @@ export default function App() {
                       <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
                         style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
                       <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
-                        {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text)}</div>}
+                        {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
                         {task.links?.length > 0 && (
                           <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
                             {task.links.map((link) => (
@@ -524,22 +561,21 @@ export default function App() {
           </div>
         ))}
       </div>
-
       <div style={{ position: "fixed", right: 24, bottom: 24, zIndex: 999 }}>
         {notesOpen && (
           <div style={{ width: 320, marginBottom: 12, padding: 16, borderRadius: 18, border: `1px solid ${border}`, background: card, boxShadow: dark ? "0 12px 40px rgba(0,0,0,0.45)" : "0 12px 30px rgba(0,0,0,0.12)" }}>
             <div style={{ fontWeight: 700, marginBottom: 10, color: title, fontSize: 15 }}>Заметки</div>
             <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
-              <button onClick={() => setNotes((prev) => prev.trim() ? prev : NOTES_TEMPLATE)}
+              <button type="button" onClick={() => setNotes((prev) => prev.trim() ? prev : NOTES_TEMPLATE)}
                 style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#27272a" : "#eef2f7", color: textColor, fontSize: 12, cursor: "pointer" }}>Вставить шаблон</button>
-              <button onClick={() => setNotes("")}
+              <button type="button" onClick={() => setNotes("")}
                 style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#3a1f1f" : "#fee2e2", color: dark ? "#fca5a5" : "#991b1b", fontSize: 12, cursor: "pointer" }}>Очистить</button>
             </div>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Заметки по ходу проверки: вопросы, правки и всё, что не хочется потерять — можно записывать сюда, чтобы не держать в голове"
               style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
           </div>
         )}
-        <button onClick={() => setNotesOpen((v) => !v)}
+        <button type="button" onClick={() => setNotesOpen((v) => !v)}
           style={{ width: 58, height: 58, borderRadius: "50%", border: "none", background: "#FFDD2D", color: "#111", boxShadow: "0 12px 32px rgba(255,221,45,.35)", fontSize: 22, cursor: "pointer" }}>✍️</button>
       </div>
     </div>
