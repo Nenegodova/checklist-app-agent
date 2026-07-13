@@ -233,6 +233,16 @@ shopping: {
         ugc: {
    "Админка": [
       { text: "Нажата кнопка из сообщества" }
+    ],
+      "Текст": [
+      {
+        links: [
+          {
+            label: "В текст добалена актуальная плашка сообщества",
+            url: "https://docs.google.com/document/d/1U_YBVur4Rtjv5jEMY1Xas9Rr4TxdvenLlIBFbVxIBjg/edit?tab=t.0"
+          }
+        ]
+      }
     ]
   },
 };
