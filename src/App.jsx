@@ -581,21 +581,21 @@ export default function App() {
               style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
           </div>
         )}
-      <button type="button" onClick={() => setNotesOpen((v) => !v)}
+<button type="button" onClick={() => setNotesOpen((v) => !v)}
   style={{ 
     width: 58, 
     height: 58, 
     borderRadius: "50%", 
     border: "2px solid #FFDD2D", 
-    background: "#111", 
-    color: "#FFDD2D", 
-    boxShadow: "0 6px 16px rgba(0,0,0,0.25)", 
+    background: bg, // Теперь фон совпадает с основным фоном страницы
+    color: dark ? "#FFDD2D" : "#111827", // Иконка адаптируется под тему для лучшей читаемости
+    boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)", // Тень подстраивается под тему
     fontSize: 22, 
     cursor: "pointer",
     display: "inline-flex", 
     alignItems: "center", 
     justifyContent: "center"
-  }}>✍️</button>
+  }}>✏️</button>
       </div>
     </div>
   );
