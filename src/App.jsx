@@ -336,10 +336,11 @@ export default function App() {
   // --- КОНЕЦ ДОБАВЛЕНИЯ ---
 
   // --- AI АГЕНТ: Состояния ---
+  // --- AI АГЕНТ: Состояния ---
   const [aiCode, setAiCode] = useState("");
   const [aiFeatures, setAiFeatures] = useState(null);
+  const [aiDoc, setAiDoc] = useState(null); // ← ДОБАВИТЬ ЭТУ СТРОКУ
   const [aiFilterMode, setAiFilterMode] = useState(false);
-
   // ИСПРАВЛЕНО: маппинг привязан к РЕАЛЬНЫМ id из вашего DATA
   const AI_FEATURE_TO_TASK_IDS = {
     has_forms: ["lists-style", "editor-badge", "utm"],
