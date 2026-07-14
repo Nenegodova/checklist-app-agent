@@ -35,7 +35,7 @@ const PRESETS = {
       { _sortOrder: 3, text: "Тег noads" },
     ],
     "Текст": [
-      {  _sortOrder: 6, text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точка, кроме последней, отбиты <br/>" },
+      {  _sortOrder: 11, text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точка, кроме последней, отбиты <br/>" },
     ],
   },
   tests: {
@@ -53,13 +53,13 @@ const PRESETS = {
       { links: [{ label: "Методичка тесты", url: "https://docs.google.com/document/d/1vBoENUtJI2UHtbBrLqVgPxuoEBE0yNvYhhATKmwiXzU/edit?tab=t.0#bookmark=id.sgzp2wu0gy8c" }] },
     ],
   },
-  compare: { "Админка": [{ text: "Тег noads" }] },
+  compare: { "Админка": [{ _sortOrder: 3, text: "Тег noads" }] },
   spending: {
     "Текст": [
       {  _sortOrder: 1, text: "В начале статьи стоит плашка panel с абзацами *p grade=\"secondary\"*" },
       { _sortOrder: 1, text: "У авторов стоят анонимные аватарки anonym_male у мужчин и anonym_female у женщин, автор стоит после оглавления" },
-      { _sortOrder: 3, text: "Траты обозначены *class=\"negative\"*" },
-      { _sortOrder: 3,text: "Доходы обозначены *class=\"positive\"*" },
+      { _sortOrder: 7, text: "Траты обозначены *class=\"negative\"*" },
+      { _sortOrder: 7, text: "Доходы обозначены *class=\"positive\"*" },
       { _sortOrder: 2, text: "Все заголовки в дневниках трат кроме заголовков дней *h2 level=\"2\"*" },
     ],
     "Админка": [
