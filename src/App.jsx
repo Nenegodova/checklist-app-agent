@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo, useCallback, useLayoutEffect } from "react";
-
 const DATA_VERSION = "1.1";
 const NOTES_TEMPLATE =
 `Вопросы к редакции:
@@ -8,9 +7,8 @@ const NOTES_TEMPLATE =
 —
 Поставить блокер:
 —
-Правки для фотореда/дизайнера:
+Правки&nbsp;для&nbsp;фотореда/дизайнера:
 —`;
-
 const CONTENT_FILTERS = {
   tables: { label: "Таблицы", default: true },
   screenshots: { label: "Скрины", default: true },
@@ -18,7 +16,6 @@ const CONTENT_FILTERS = {
   poll: { label: "Опрос", default: true },
   infographic: { label: "Инфографика", default: true },
 };
-
 const buildContentFilters = () => {
   const result = {};
   Object.entries(CONTENT_FILTERS).forEach(([key, value]) => {
@@ -26,7 +23,6 @@ const buildContentFilters = () => {
   });
   return result;
 };
-
 const PRESETS = {
   default: {},
   invest: {
@@ -37,74 +33,74 @@ const PRESETS = {
   },
   shopping: {
     "Админка": [
-      { text: "В подвале стоит: Цены действительны на момент публикации" },
+      { text: "В&nbsp;подвале с&nbsp;тоит: Цены действительны&nbsp;на&nbsp;момент публикации" },
       { _sortOrder: 3, text: "Тег noads" },
     ],
     "Текст": [
-      { text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точка, кроме последней, отбиты <br/>" },
+      { text: "Список&nbsp;в&nbsp;шортах: первая с&nbsp;трочка с&nbsp;&nbsp;большой, с&nbsp;ледующие с&nbsp;&nbsp;маленькой, в&nbsp;конце каждой с&nbsp;трочки точка, кроме последней, отбиты <br/>" },
     ],
   },
   tests: {
     "Текст": [
-      { text: "В мини-тестах автор и подпись стоят перед лидом" },
-      { _sortOrder: 6, text: "Внутри конфига есть все необходимые склейки" },
+      { text: "В&nbsp;мини-тестах автор и&nbsp;подпись с&nbsp;тоят перед&nbsp;лидом" },
+      { _sortOrder: 6, text: "Внутри&nbsp;конфига есть все необходимые с&nbsp;клейки" },
     ],
     "Админка": [
-      { text: "Проверить автора обложки или источники" },
+      { text: "Проверить автора обложки или&nbsp;источники" },
       { text: "Тег *noadscalctest*" },
-      { text: "В больших тестах под обложкой указан иллюстратор" },
+      { text: "В&nbsp;больших тестах под&nbsp;обложкой указан иллюстратор" },
     ],
     "Прочее": [
-      { text: "В кайтене прикреплены ссылки на админку и конфиг" },
+      { text: "В&nbsp;кайтене прикреплены с&nbsp;сылки&nbsp;на&nbsp;админку и&nbsp;конфиг" },
       { links: [{ label: "Методичка тесты", url: "https://docs.google.com/document/d/1vBoENUtJI2UHtbBrLqVgPxuoEBE0yNvYhhATKmwiXzU/edit?tab=t.0#bookmark=id.sgzp2wu0gy8c" }] },
     ],
   },
   compare: { "Админка": [{ text: "Тег noads" }] },
   spending: {
     "Текст": [
-      { text: "В начале статьи стоит panel с абзацами *p grade=\"secondary\"*" },
-      { text: "У авторов стоят анонимные аватарки anonym_male у мужчин и anonym_female у женщин, автор стоит после оглавления" },
+      { text: "В&nbsp;начале с&nbsp;татьи с&nbsp;тоит panel&nbsp;с&nbsp;абзацами *p grade=\"secondary\"*" },
+      { text: "У&nbsp;авторов с&nbsp;тоят анонимные аватарки anonym_male&nbsp;у&nbsp;мужчин и&nbsp;anonym_female&nbsp;у&nbsp;женщин, автор с&nbsp;тоит после&nbsp;оглавления" },
       { text: "Траты обозначены *class=\"negative\"*" },
       { text: "Доходы обозначены *class=\"positive\"*" },
-      { text: "Все заголовки в дневниках трат кроме заголовков дней *h2 level=\"2\"*" },
+      { text: "Все заголовки&nbsp;в&nbsp;дневниках трат кроме&nbsp;заголовков дней *h2 level=\"2\"*" },
     ],
     "Админка": [
-      { text: "Нажата кнопка из сообщества" },
+      { text: "Нажата кнопка&nbsp;из&nbsp;сообщества" },
       { text: "Подпись к обложке: Фотография — Ксения Михайлова" },
     ],
   },
   cd: {
     "Админка": [
-      { _sortOrder: 0, text: "В классических ЧД нет подзага" },
-      { _sortOrder: 1, text: "В подборке ЧД есть подзаг" },
-      { text: "Обложка с эмодзи с типом мейна «мини над заголовком»" },
+      { _sortOrder: 0, text: "В&nbsp;классических ЧД нет&nbsp;подзага" },
+      { _sortOrder: 1, text: "В&nbsp;подборке ЧД есть&nbsp;подзаг" },
+      { text: "Обложка&nbsp;с&nbsp;эмодзи&nbsp;с&nbsp;типом мейна «мини над&nbsp;заголовком»" },
       { _sortOrder: 3, text: "Редакция Что делать + тематическая" },
-      { text: "Нажаты кнопки из сообщества и выбор редакции" },
-      { text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог-описания" },
-      { text: "В реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если его нет, то добавляем. В выдуманных проставляем тег вместе с другими. Если в статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще один технический тег: *feature-out.* Для опросов этот тег не нужен" },
-      { _sortOrder: 2, text: "В подборке ЧД основной заг начинается со слов «Что делать, если:..»" },
-      { _sortOrder: 4, text: "В подборке ЧД url статьи всегда начинается с префикса «ask-»" },
-      { text: "В классических ЧД цвет фона для обложек #2c2c2c" },
-      { text: "В подборке ЧД на обложке ОГ по три эмодзи" },
+      { text: "Нажаты кнопки&nbsp;из&nbsp;сообщества и&nbsp;выбор редакции" },
+      { text: "Обязательно указываем краткое описание. В&nbsp;это поле дублируем текст&nbsp;из&nbsp;ог-описания" },
+      { text: "В&nbsp;реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если&nbsp;его нет, то добавляем. В&nbsp;выдуманных проставляем тег вместе&nbsp;с&nbsp;другими. Если&nbsp;в&nbsp;статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще&nbsp;один технический тег: *feature-out.* Для&nbsp;опросов этот тег не&nbsp;нужен" },
+      { _sortOrder: 2, text: "В&nbsp;подборке ЧД основной заг начинается с&nbsp;о&nbsp;слов «Что делать, если:..»" },
+      { _sortOrder: 4, text: "В&nbsp;подборке ЧД url с&nbsp;татьи всегда начинается&nbsp;с&nbsp;префикса «ask-»" },
+      { text: "В&nbsp;классических ЧД цвет фона&nbsp;для&nbsp;обложек #2c2c2c" },
+      { text: "В&nbsp;подборке ЧД на&nbsp;обложке ОГ по&nbsp;три эмодзи" },
     ],
     "Текст": [
-      { _sortOrder: 0, text: "В классических ЧД нет лида" },
-      { _sortOrder: 1, text: "В подборке ЧД есть лид" },
-      { text: "Есть автор вопроса и вопрос в плашке с *isbuble=\"true\"*" },
+      { _sortOrder: 0, text: "В&nbsp;классических ЧД нет&nbsp;лида" },
+      { _sortOrder: 1, text: "В&nbsp;подборке ЧД есть&nbsp;лид" },
+      { text: "Есть автор вопроса и вопрос в&nbsp;плашке с&nbsp; *isbuble=\"true\"*" },
       { _sortOrder: 2, text: "Есть автор ответа" },
-      { _sortOrder: 3, text: "В классических ЧД написание автора вопроса «спросил в Сообществе»/«спросила в Сообществе»" },
-      { _sortOrder: 4, text: "В классических ЧД заголовки *h2 level=\"2\"*" },
-      { _sortOrder: 5, text: "В подборке ЧД заголовки *h2*" },
-      { _sortOrder: 6, text: "В подборке ЧД у каждого вопроса стоит бирка с эмодзи" },
-      { text: "Если в конце статьи стоит список статей: вводное предложение выделяем болдом, для вводного предложения и списка используем шифт с *p grade=\"large\"*" },
-      { _sortOrder: 7, text: "В микро ЧД ответ на вопрос в плашке" },
-      { text: "В микро ЧД есть utm-метки у ссылок на внутренние статьи" },
-      { _sortOrder: 8, text: "В микро ЧД автор ответа с подписью «нашел ответ»/«нашла ответ»" },
+      { _sortOrder: 3, text: "В&nbsp;классических ЧД написание автора вопроса «спросил&nbsp;в&nbsp;Сообществе»/«спросила&nbsp;в&nbsp;Сообществе»" },
+      { _sortOrder: 4, text: "В&nbsp;классических ЧД заголовки *h2 level=\"2\"*" },
+      { _sortOrder: 5, text: "В&nbsp;подборке ЧД заголовки *h2*" },
+      { _sortOrder: 6, text: "В&nbsp;подборке ЧД у каждого вопроса с&nbsp;тоит бирка с&nbsp; эмодзи" },
+      { text: "Если в&nbsp;конце с&nbsp;татьи с&nbsp;тоит с&nbsp;писок с&nbsp;татей: вводное предложение выделяем болдом, для вводного предложения и с&nbsp;писка используем шифт с&nbsp; *p grade=\"large\"*" },
+      { _sortOrder: 7, text: "В микро ЧД ответ на&nbsp;вопрос в&nbsp;плашке" },
+      { text: "В микро ЧД есть utm-метки у с&nbsp;сылок на&nbsp;внутренние с&nbsp;татьи" },
+      { _sortOrder: 8, text: "В микро ЧД автор ответа с&nbsp; подписью «нашел ответ»/«нашла ответ»" },
     ],
     "Выпуск": [
-      { text: "Если материал сверстан в старом вопросе автора и нужно выпустить с новым url, то обязательно после публикации нужно настроить редирект" },
-      { text: "В случае, когда после выпуска меняется обложка, пишем в тематическом чате соответствующей редакции и чате «Т–Ж + соцсети», что поменялась обложка, прикладываем ссылку на статью и новую обложку" },
-      { text: "Проверить комментарии редактора на наличие нового url. Если комментария нет, то выпускаем со старым url и редирект делать не нужно" },
+      { text: "Если материал с&nbsp;верстан в&nbsp;старом вопросе автора и нужно выпустить с&nbsp; новым url, то обязательно после публикации нужно настроить редирект" },
+      { text: "В с&nbsp;лучае, когда после выпуска меняется обложка, пишем в&nbsp;тематическом чате с&nbsp;оответствующей редакции и чате «Т–Ж + с&nbsp;оцсети», что поменялась обложка, прикладываем с&nbsp;сылку на&nbsp;статью и новую обложку" },
+      { text: "Проверить комментарии редактора на&nbsp;наличие нового url. Если комментария нет, то выпускаем с&nbsp;о с&nbsp;тарым url и редирект делать не&nbsp;нужно" },
     ],
     "Прочее": [
       { links: [{ label: "Методичка ЧД", url: "https://tinkoffjournal.kaiten.ru/documents/g/c4db513a-6478-46ae-967b-984c87b15af0" }] },
@@ -113,114 +109,111 @@ const PRESETS = {
   shorts: {
     "Админка": [
       { _sortOrder: 2, text: "Проставлен *тег noadsshort*" },
-      { text: "Среди потоков добавлены «Шорты», но не основным потоком" },
-      { text: "Нажата кнопка из сообщества и выбор редакции если вторая редакция UGC" },
-      { text: "Обложка внутри статьи отсутствует" },
-      { _sortOrder: 4, text: "Источник фото в подвале" },
+      { text: "Среди&nbsp;потоков добавлены «Шорты», но&nbsp;не&nbsp;основным потоком" },
+      { text: "Нажата кнопка&nbsp;из&nbsp;сообщества и&nbsp;выбор редакции если&nbsp;вторая редакция UGC" },
+      { text: "Обложка&nbsp;внутри&nbsp;статьи отсутствует" },
+      { _sortOrder: 4, text: "Источник фото&nbsp;в&nbsp;подвале" },
     ],
     "Текст": [
-      { _sortOrder: 4, text: "Подводка размещается в теге *p grade=\"secondary\"*, если она слишком длинная, то часть скрывается под кат" },
-      { _sortOrder: 1, text: "Оглавление стоит перед карточками-тайлами" },
-      { text: "У текста внутри шортов *grade=\"medium\"*" },
-      { _sortOrder: 3, text: "В заголовке нет эмодзи, если в карточке есть картинка" },
-      { text: "Для картинки-обтравки добавлен атрибут *image_style=\"picture\"*" },
-      { text: "В последней карточке, если это не рассылка, добавлена иконка потока или Telegram, в заголовке этой карточки нет эмодзи. В шортах иконки со скруглёнными углами" },
-      { text: "Проверить у ссылки на курс наличие хвоста, если его нет, запросить у редактора" },
-      { text: "Проверить у ссылки на анкету наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_anketa, вместо стандартного. Исключение — анкеты спорта" },
-      { text: "Проверить у ссылки на статью или поток наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_button" },
-      { text: "Дискрипшн находится внутри *<tiles></tiles>* и тега *p grade=\"small\"*." },
-      { text: "В дискрипшен под последней карточкой вынесена информация об актуальности цен и ценах в валюте (поскольку не используем тултипы), источниках данных, метках об иноагентах и т. д." },
-      { text: "У списка в конце шортов *p grade=\"secondary\"*" },
-      { text: "Список в конце шортов из 3–4 ссылок выстроен «лесенкой» если позволяет смысл. Вводное предложение — без жирного выделения" },
+      { _sortOrder: 4, text: "Подводка размещается&nbsp;в&nbsp;теге *p grade=\"secondary\"*, если&nbsp;она с&nbsp;лишком длинная, то&nbsp;часть с&nbsp;крывается под&nbsp;кат" },
+      { _sortOrder: 1, text: "Оглавление с&nbsp;тоит перед&nbsp;карточками-тайлами" },
+      { text: "У&nbsp;текста внутри&nbsp;шортов *grade=\"medium\"*" },
+      { _sortOrder: 3, text: "В&nbsp;заголовке нет эмодзи, если&nbsp;в&nbsp;карточке есть картинка" },
+      { text: "Для&nbsp;картинки-обтравки добавлен атрибут *image_style=\"picture\"*" },
+      { text: "В последней карточке, если&nbsp;это не&nbsp;рассылка, добавлена иконка потока или Telegram, в&nbsp;заголовке этой карточки нет эмодзи. В&nbsp;шортах иконки с&nbsp;о&nbsp;скруглёнными углами" },
+      { text: "Проверить&nbsp;у&nbsp;ссылки&nbsp;на&nbsp;курс наличие хвоста, если&nbsp;его нет, запросить&nbsp;у&nbsp;редактора" },
+      { text: "Проверить&nbsp;у&nbsp;ссылки&nbsp;на&nbsp;анкету наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_ankета, вместо с&nbsp;тандартного. Исключение — анкеты с&nbsp;порта" },
+      { text: "Проверить&nbsp;у&nbsp;ссылки&nbsp;на&nbsp;статью или&nbsp;поток наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_button" },
+      { text: "Дискрипшн находится&nbsp;внутри&nbsp;*<tiles></tiles>* и&nbsp;тега *p grade=\"small\"*." },
+      { text: "В&nbsp;дискрипшен под&nbsp;последней карточкой вынесена информация об&nbsp;актуальности цен и&nbsp;ценах&nbsp;в&nbsp;валюте (поскольку&nbsp;не используем тултипы), источниках данных, метках об&nbsp;иноагентах и&nbsp;т. д." },
+      { text: "У&nbsp;списка&nbsp;в&nbsp;конце шортов *p grade=\"secondary\"*" },
+      { text: "Список&nbsp;в&nbsp;конце шортов из 3–4 с&nbsp;сылок выстроен «лесенкой» если&nbsp;позволяет с&nbsp;мысл. Вводное предложение — без&nbsp;жирного выделения" },
     ],
     "Прочее": [
       { links: [{ label: "Методичка шорты", url: "https://tinkoffjournal.kaiten.ru/documents/g/c4db513a-6478-46ae-967b-984c87b15af0" }] },
     ],
   },
   ugc: {
-    "Админка": [{ text: "Нажата кнопка из сообщества" }],
+    "Админка": [{ text: "Нажата кнопка&nbsp;из&nbsp;сообщества" }],
     "Текст": [
       {
         _sortOrder: 2,
-        links: [{ label: "В текст добавлена актуальная плашка сообщества", url: "https://docs.google.com/document/d/1U_YBVur4Rtjv5jEMY1Xas9Rr4TxdvenLlIBFbVxIBjg/edit?tab=t.0" }],
+        links: [{ label: "В&nbsp;текст добавлена актуальная плашка с&nbsp;ообщества", url: "https://docs.google.com/document/d/1U_YBVur4Rtjv5jEMY1Xas9Rr4TxdvenLlIBFbVxIBjg/edit?tab=t.0" }],
       },
     ],
   },
 };
-
 const PRESET_EXCLUDES = {
   cd: { "Текст": ["lead", "heading-levels", "editor-badge"], "Админка": ["cover-author", "cover-type", "utm", "credit"] },
   shorts: { "Текст": ["tooltip-link", "currency-tooltip", "lists-style", "utm"] },
 };
-
 const DATA = {
   "Админка": [
-    { text: "Проверить, что коллеги закрыли вкладку с визивигом" },
+    { text: "Проверить, что&nbsp;коллеги закрыли вкладку&nbsp;с&nbsp;визивигом" },
     { text: "Проверить формат" },
-    { text: "Ог-заг = заголовок статьи, ОГ-описание на месте" },
-    { text: "Перенести мету из комментария в кайтене в админку" },
-    { text: "Проверить скрытие" },
-    { text: "Если в затравке отсутствует знак вопроса, то стоит двоеточие" },
-    { id: "cover-type", text: "Проверить тип обложки, кредит к обложке в нужном месте (под обложкой/в подвале), наличие бирки на ОГ, текст на ОГ оттипирован (проставлены склейки)" },
-    { id: "credit", text: "Проверить автора обложки или источники" },
-    { links: [{ label: "Иноагенты и прочие враги в подвале", url: "https://tinkoffjournal.kaiten.ru/documents/d/05e4af49-d4af-433d-a183-528ac0d4da1a" }] },
-    {_sortOrder: 9999, text: "Мягкий перенос в заге", links: [{ label: "Символы", url: "https://symbl.cc/ru/00AD/" }, { label: "Правила", url: "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe" }] },
+    { text: "Ог-заг = заголовок с&nbsp;татьи, ОГ-описание на&nbsp;месте" },
+    { text: "Перенести мету&nbsp;из&nbsp;комментария&nbsp;в&nbsp;кайтене&nbsp;в&nbsp;админку" },
+    { text: "Проверить с&nbsp;крытие" },
+    { text: "Если&nbsp;в&nbsp;затравке отсутствует знак вопроса, то&nbsp;стоит двоеточие" },
+    { id: "cover-type", text: "Проверить тип обложки, кредит&nbsp;к&nbsp;обложке&nbsp;в&nbsp;нужном месте (под&nbsp;обложкой/в&nbsp;подвале), наличие бирки&nbsp;на&nbsp;ОГ, текст&nbsp;на&nbsp;ОГ оттипирован (проставлены с&nbsp;клейки)" },
+    { id: "credit", text: "Проверить автора обложки или&nbsp;источники" },
+    { links: [{ label: "Иноагенты и&nbsp;прочие враги&nbsp;в&nbsp;подвале", url: "https://tinkoffjournal.kaiten.ru/documents/d/05e4af49-d4af-433d-a183-528ac0d4da1a" }] },
+    {_sortOrder: 9999, text: "Мягкий перенос&nbsp;в&nbsp;заге", links: [{ label: "Символы", url: "https://symbl.cc/ru/00AD/" }, { label: "Правила", url: "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe" }] },
   ],
   "Текст": [
-    { text: "Подпись автора с маленькой буквы" },
-    { id: "lead", text: "Лид на месте, в конце точка" },
-    { text: "Якоря в оглавлении стоят верно. Двоеточие в оглавлении убрать" },
-    { id: "heading-levels", text: "Везде проставлены верные уровни заголовков (*h2*, *h2 level=\"2\"*, *h3* для плашек)" },
-    { text: "Проверить бирки над заголовками" },
-    { text: "Заменяем невидимые пробелы на *&nbsp;*" },
-    { text: "*&nbsp;* склеяны слова с частицами бы, же, ли; предлоги при, про, над, под, для, вне, обо, без" },
-    { text: "Внутри *<nobr></nobr>* стоят диапазоны чисел, составные наречия, °C, пишущиеся через дефис слова (до 4 символов от дефиса), числа, которые идут после того, что считаем (минут 15, iPhone 16), аббревиатуры-дополнения (страны ЕС, ставка ЦБ, Витамин C)" },
-    { text: "После эмодзи стоит пробел" },
-    { text: "Поправить типографирование: м², а не м2, 1/2, а не ½" },
-    { text: "Предлог, точка, восклицательный, вопросительный знак, двоеточие в ссылках, запятые вне ссылок" },
-    { text: "Точка, запятая, восклицательный, вопросительный знаки, двоеточие, точка с запятой в жире/марке" },
-    { text: "У сервисных плашек в последнем предложении отсутствует точка" },
+    { text: "Подпись автора&nbsp;с&nbsp;маленькой буквы" },
+    { id: "lead", text: "Лид&nbsp;на&nbsp;месте, в&nbsp;конце точка" },
+    { text: "Якоря&nbsp;в&nbsp;оглавлении с&nbsp;тоят верно. Двоеточие&nbsp;в&nbsp;оглавлении убрать" },
+    { id: "heading-levels", text: "Везде проставлены верные уровни заголовков (*h2*, *h2 level=\"2\"*, *h3* для&nbsp;плашек)" },
+    { text: "Проверить бирки&nbsp;над&nbsp;заголовками" },
+    { text: "Заменяем невидимые пробелы на&nbsp;*&nbsp;*" },
+    { text: "*&nbsp;* с&nbsp;клеяны с&nbsp;лова&nbsp;с&nbsp;частицами бы, же, ли; предлоги при, про, над, под, для, вне, обо, без" },
+    { text: "Внутри&nbsp;*<nobr></nobr>* с&nbsp;тоят диапазоны чисел, с&nbsp;оставные наречия, °C, пишущиеся&nbsp;через дефис с&nbsp;лова (до 4 с&nbsp;имволов&nbsp;от дефиса), числа, которые идут&nbsp;после того, что с&nbsp;читаем (<nobr>минут 15</nobr>, <nobr>iPhone 16</nobr>), аббревиатуры-дополнения (<nobr>страны ЕС</nobr>, <nobr>ставка ЦБ</nobr>, <nobr>Витамин C</nobr>)" },
+    { text: "После&nbsp;эмодзи с&nbsp;тоит пробел" },
+    { text: "Поправить типографирование: м², а не&nbsp;м2, 1/2, а не&nbsp;½" },
+    { text: "Предлог, точка, восклицательный, вопросительный знак, двоеточие&nbsp;в&nbsp;ссылках, запятые&nbsp;вне&nbsp;ссылок" },
+    { text: "Точка, запятая, восклицательный, вопросительный знаки, двоеточие, точка с&nbsp; запятой в жире/марке" },
+    { text: "У с&nbsp;ервисных плашек&nbsp;в&nbsp;последнем предложении отсутствует точка" },
     { text: "Нет пустых атрибутов" },
     { id: "utm", text: "UTM метки отсутствуют" },
-    { id: "currency-tooltip", text: "У первого валютного фичера тултип: Суммы в рублях пересчитываются по актуальному курсу раз в день" },
-    { id: "tooltip-link", text: "Тултип не стоит рядом с ссылкой" },
-    { id: "lists-style", text: "Списки с цифрами и кастомные — с большой буквы, в конце точки. Список с буллитами — с маленькой буквы, в конце точка, запятые" },
-    { text: "У плашек с авторами стоит *hl isbubble=\"true\"*" },
-    { text: "Опрос на месте, в нем все склеено", feature: "poll" },
+    { id: "currency-tooltip", text: "У первого валютного фичера тултип: с&nbsp;уммы&nbsp;в&nbsp;рублях пересчитываются&nbsp;по&nbsp;актуальному курсу раз&nbsp;в&nbsp;день" },
+    { id: "tooltip-link", text: "Тултип не стоит рядом&nbsp;с&nbsp;ссылкой" },
+    { id: "lists-style", text: "Списки с&nbsp;&nbsp;цифрами и&nbsp;кастомные — с&nbsp;&nbsp;большой буквы, в&nbsp;конце точки. с&nbsp;писок с&nbsp;&nbsp;буллитами — с&nbsp;&nbsp;маленькой буквы, в&nbsp;конце точка, запятые" },
+    { text: "У&nbsp;плашек&nbsp;с&nbsp;авторами с&nbsp;тоит *hl isbubble=\"true\"*" },
+    { text: "Опрос&nbsp;на&nbsp;месте, в&nbsp;нем все с&nbsp;клеено", feature: "poll" },
     { id: "editor-badge", text: "Верная плашка редакции" },
-    { text: "Расставить поля если нужно, они не должны стоять рядом с баннерами, анкетами, картинками и таблицами" },
+    { text: "Расставить поля если&nbsp;нужно, они не должны с&nbsp;тоять рядом&nbsp;с&nbsp;баннерами, анкетами, картинками и&nbsp;таблицами" },
     { text: "Проверить виджеты, фичеры, баннеры, этажи, кат" },
   ],
   "Таблицы": [
     { text: "У таблицы есть заголовок" },
-    { text: "Проверить *table sticky-header=\"true\"* у таблиц с thead" },
+    { text: "Проверить *table sticky-header=\"true\"*&nbsp;у&nbsp;таблиц&nbsp;с&nbsp;thead" },
     { text: "Красиво отрегулированы ширины" },
-    { text: "Выравнивание по левому краю если: числа не сравниваются между собой, а используются как обозначение или порядковый номер, в колонке есть диапазоны, в колонке смешаны разные единицы измерения, в колонке используются валютные фичеры (в том числе есть ячейки с ним, а есть без него), в части ячеек есть дополнительные слова или символы, в некоторых ячейках нет числовых значений" },
-    { text: "Списки: пункты лежат внутри одной ячейки, вначале пункта стоит •, после буллита стоит пробел, каждый пункт с большой буквы, в конце пунктов нет знаков препинания, пункты разделяются <br/>" },
-    { text: "Если в таблице есть цены, то строки нужно отсортировать по убыванию цен (от большего к меньшему)" },
+    { text: "Выравнивание&nbsp;по&nbsp;левому краю если: числа не&nbsp;сравниваются между&nbsp;собой, а&nbsp;используются как обозначение или порядковый номер, в&nbsp;колонке есть диапазоны, в&nbsp;колонке с&nbsp;мешаны разные единицы измерения, в&nbsp;колонке используются валютные фичеры (в&nbsp;том числе есть ячейки&nbsp;с&nbsp;ним, а&nbsp;есть без&nbsp;него), в&nbsp;части ячеек нет числовых значений" },
+    { text: "Списки: пункты лежат&nbsp;внутри&nbsp;одной ячейки, вначале пункта с&nbsp;тоит •, после&nbsp;буллита с&nbsp;тоит пробел, каждый пункт с&nbsp;&nbsp;большой буквы, в&nbsp;конце пунктов нет знаков препинания, пункты разделяются <br/>" },
+    { text: "Если&nbsp;в&nbsp;таблице есть цены, то&nbsp;строки нужно отсортировать&nbsp;по&nbsp;убыванию цен (от большего к&nbsp;меньшему)" },
   ],
   "Картинки": [
-    { text: "Источники под фотками заменены на ©", feature: "images" },
-    { text: "Скрины ретиновые и чистые, текст читаем, соблюдены поля, проставлен *prop=\"bordered\"* если фон сливается с фоном страницы", feature: "screenshots" },
-    { text: "Проверить необходимость *prop=\"bordered\"* у видео", feature: "images" },
-    { text: "Для инфографики проставлен *prop=\"bordered rounded\"*", feature: "infographic" },
-    { text: "В подписе к инфографике есть Источник: ", feature: "infographic" },
-    { text: "Проверить в кайтене наличие комментария от фотореда о размере картинок или фоторам", feature: "images" },
-    { text: "Проверить есть ли засветы или вотермарки на картинках от фотореда", feature: "images" },
-    { text: "При необходимости заблюрены все персональные данные", feature: "images" },
+    { text: "Источники&nbsp;под&nbsp;фотками заменены&nbsp;на ©", feature: "images" },
+    { text: "Скрины ретиновые и&nbsp;чистые, текст читаем, с&nbsp;облюдены поля, проставлен *prop=\"bordered\"* если&nbsp;фон с&nbsp;ливается&nbsp;с&nbsp;фоном с&nbsp;траницы", feature: "screenshots" },
+    { text: "Проверить необходимость *prop=\"bordered\"*&nbsp;у&nbsp;видео", feature: "images" },
+    { text: "Для&nbsp;инфографики проставлен *prop=\"bordered rounded\"*", feature: "infographic" },
+    { text: "В&nbsp;подписе&nbsp;к&nbsp;инфографике есть Источник: ", feature: "infographic" },
+    { text: "Проверить&nbsp;в&nbsp;кайтене наличие комментария&nbsp;от&nbsp;фотореда&nbsp;о&nbsp;размере картинок или&nbsp;фоторам", feature: "images" },
+    { text: "Проверить&nbsp;есть&nbsp;ли&nbsp;засветы или&nbsp;вотермарки&nbsp;на&nbsp;картинках&nbsp;от&nbsp;фотореда", feature: "images" },
+    { text: "При&nbsp;необходимости заблюрены все персональные данные", feature: "images" },
   ],
   "Выпуск": [
-    { text: "Проверить метку разметка, если есть доп. авторы" },
-    { text: "Проверить комментарии в кайтене" },
-    { text: "В кайтен прикрепить ссылку на материал после выпуска и опенграф-картинку" },
-    { text: "После выпуска проверить материал на главной" },
+    { text: "Проверить метку разметка, если&nbsp;есть доп. авторы" },
+    { text: "Проверить комментарии&nbsp;в&nbsp;кайтене" },
+    { text: "В&nbsp;кайтен прикрепить с&nbsp;сылку&nbsp;на&nbsp;материал после&nbsp;выпуска и&nbsp;опенграф-картинку" },
+    { text: "После выпуска проверить материал&nbsp;на&nbsp;главной" },
   ],
   "Прочее": [
-    { text: "В ссылке шаблона гугл-дока для копирования */edit* заменен на */copy*." },
+    { text: "В&nbsp;ссылке шаблона гугл-дока&nbsp;для копирования */edit* заменен&nbsp;на */copy*." },
     { links: [{ label: "Методички общие", url: "https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994" }] },
   ],
 };
-
 // --- Helpers ---
 const readStorageJSON = (key) => {
   try {
@@ -232,7 +225,6 @@ const readStorageJSON = (key) => {
     return null;
   }
 };
-
 const buildCollapsed = (data, prev = {}) => {
   const next = {};
   Object.keys(data).forEach((cat) => {
@@ -240,7 +232,6 @@ const buildCollapsed = (data, prev = {}) => {
   });
   return next;
 };
-
 const buildTasks = (data) => {
   const initial = {};
   Object.keys(data).forEach((cat) => {
@@ -254,7 +245,6 @@ const buildTasks = (data) => {
   });
   return initial;
 };
-
 function useMediaQuery(query) {
   const getMatches = () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false);
   const [matches, setMatches] = useState(getMatches);
@@ -266,8 +256,7 @@ function useMediaQuery(query) {
   }, [query]);
   return matches;
 }
-
-// Исправлено: стабильные key через счетчик вместо индекса split-массива
+// Исправлено: с&nbsp;табильные key через с&nbsp;четчик вместо индекса split-массива
 const renderTextWithLinks = (text, dark) => {
   if (!text) return null;
   const parts = text.split(/(\*[^*]+\*|\[[^\]]+\]\(https?:\/\/[^)]+\))/g);
@@ -291,7 +280,6 @@ const renderTextWithLinks = (text, dark) => {
     return <span key={keyIdx++}>{part}</span>;
   });
 };
-
 // --- Component ---
 export default function App() {
   const [dark, setDark] = useState(() => {
@@ -303,8 +291,7 @@ export default function App() {
       return false;
     }
   });
-
-  // Живое отслеживание системной темы (если пользователь не переключал вручную)
+  // Живое отслеживание с&nbsp;истемной темы (если пользователь не&nbsp;переключал вручную)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -316,14 +303,12 @@ export default function App() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
-
   const [preset, setPreset] = useState(() => localStorage.getItem("preset") || "default");
   const [contentFilters, setContentFilters] = useState(() => readStorageJSON("contentFilters") || buildContentFilters());
   const [focusMode, setFocusMode] = useState(false);
   const [notes, setNotes] = useState(() => localStorage.getItem("notes") || "");
   const [notesOpen, setNotesOpen] = useState(false);
-
-  // Синхронизация темы с DOM и localStorage (безопасная, без лишних записей)
+  // с&nbsp;инхронизация темы с&nbsp; DOM и localStorage (безопасная, без лишних записей)
   useLayoutEffect(() => {
     document.documentElement.className = dark ? "dark" : "";
     const currentValue = localStorage.getItem("dark");
@@ -331,7 +316,6 @@ export default function App() {
       localStorage.setItem("dark", dark);
     }
   }, [dark]);
-
   const currentData = useMemo(() => {
     const clone = typeof structuredClone === "function" ? structuredClone(DATA) : JSON.parse(JSON.stringify(DATA));
     const presetData = PRESETS[preset];
@@ -350,7 +334,6 @@ export default function App() {
           .sort((a, b) => (a._sortOrder ?? Infinity) - (b._sortOrder ?? Infinity));
       });
     }
-
     const excludes = PRESET_EXCLUDES[preset];
     if (excludes) {
       Object.entries(excludes).forEach(([cat, ids]) => {
@@ -363,7 +346,6 @@ export default function App() {
     }
     return clone;
   }, [preset]);
-
   const [tasks, setTasks] = useState(() => {
     const savedVersion = localStorage.getItem("version");
     const saved = readStorageJSON("checklist");
@@ -375,16 +357,13 @@ export default function App() {
     }
     return saved || buildTasks(currentData);
   });
-
   const [collapsed, setCollapsed] = useState(() => readStorageJSON("collapsed") || buildCollapsed(currentData));
-
   useEffect(() => {
     localStorage.setItem("contentFilters", JSON.stringify(contentFilters));
     localStorage.setItem("checklist", JSON.stringify(tasks));
     localStorage.setItem("collapsed", JSON.stringify(collapsed));
     localStorage.setItem("notes", notes);
   }, [contentFilters, tasks, collapsed, notes]);
-
   useEffect(() => {
     setTasks((prev) => {
       const next = {};
@@ -402,14 +381,12 @@ export default function App() {
     });
     setCollapsed((prev) => buildCollapsed(currentData, prev));
   }, [currentData]);
-
   const toggle = useCallback((cat, index) => {
     setTasks((prev) => {
       const updated = prev[cat].map((t, i) => (i === index ? { ...t, done: !t.done } : t));
       return { ...prev, [cat]: updated };
     });
   }, []);
-
   useEffect(() => {
     setCollapsed((prev) => {
       let next = { ...prev };
@@ -428,7 +405,6 @@ export default function App() {
       return next;
     });
   }, [tasks]);
-
   const resetAll = useCallback(() => {
     setTasks((prev) => {
       const cleared = {};
@@ -438,7 +414,6 @@ export default function App() {
       return cleared;
     });
   }, []);
-
   const hardReset = useCallback(() => {
     ["preset", "notes", "checklist", "collapsed", "contentFilters", "version", "dark"].forEach((key) => localStorage.removeItem(key));
     localStorage.setItem("version", DATA_VERSION);
@@ -450,11 +425,9 @@ export default function App() {
     setTasks(buildTasks(DATA));
     setCollapsed(buildCollapsed(DATA));
   }, []);
-
   const toggleCollapse = useCallback((cat) => {
     setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
   }, []);
-
   const allTasks = Object.values(tasks ?? {}).flat();
   const doneTasks = allTasks.filter((t) => t.done).length;
   const totalTasks = allTasks.length;
@@ -487,7 +460,6 @@ export default function App() {
     card: { display: "flex", alignItems: "flex-start", gap: 10, padding: "16px 18px", border: `1px solid ${border}`, background: card, textAlign: "left", borderRadius: 18, transition: "all 0.15s ease", boxShadow: dark ? "0 1px 2px rgba(0,0,0,0.3)" : "0 1px 2px rgba(0,0,0,0.05)" },
     taskText: { flex: 1, fontSize: 13, lineHeight: "18px", color: textColor, textDecoration: "none" },
   };
-
   return (
     <div className={dark ? "dark" : ""} style={{ padding: 30, minHeight: "100vh", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial", background: bg, color: textColor }}>
       <style>{`
@@ -555,7 +527,7 @@ export default function App() {
                             {task.links.map((link) => (
                               <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
                                 style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: `1px solid ${dark ? "#3f3f46" : "#d1d5db"}` }}>{link.label}</a>
-                            ))}
+                            )}
                           </div>
                         )}
                       </div>
@@ -577,7 +549,7 @@ export default function App() {
               <button type="button" onClick={() => setNotes("")}
                 style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#3a1f1f" : "#fee2e2", color: dark ? "#fca5a5" : "#991b1b", fontSize: 12, cursor: "pointer" }}>Очистить</button>
             </div>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Заметки по ходу проверки: вопросы, правки и всё, что не хочется потерять — можно записывать сюда, чтобы не держать в голове"
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Заметки&nbsp;по&nbsp;ходу проверки: вопросы, правки и&nbsp;всё, что&nbsp;не хочется потерять — можно записывать с&nbsp;юда, чтобы&nbsp;не держать&nbsp;в голове"
               style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
           </div>
         )}
@@ -587,7 +559,7 @@ export default function App() {
     height: 58, 
     borderRadius: "50%", 
     border: "2px solid #FFDD2D", 
-    background: bg, // Теперь фон совпадает с основным фоном страницы
+    background: bg, // Теперь фон с&nbsp;овпадает с&nbsp; основным фоном с&nbsp;траницы
     color: dark ? "#FFDD2D" : "#111827", // Иконка адаптируется под тему для лучшей читаемости
     boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)", // Тень подстраивается под тему
     fontSize: 22, 
