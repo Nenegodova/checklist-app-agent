@@ -355,11 +355,26 @@ export default function App() {
   };
 
   // ИСПРАВЛЕНО: убран alert, добавлена обработка ошибок
-  const analyzeCode = useCallback((code) => {
+    const analyzeCode = useCallback((code) => {
     if (!code.trim()) return;
     try {
       const parser = new DOMParser();
       const doc = parser.parseFromString(code, 'text/html');
+      
+      // 🔍 Точный парсинг автора
+      const authorEl = doc.querySelector('author');
+      const descEl = authorEl?.querySelector('description');
+      const rawDesc = descEl?.textContent.trim() || '';
+      const authorInfo = {
+        exists: !!authorEl,
+        hasDesc: !!descEl,
+        text: rawDesc,
+        isEmpty: rawDesc.length === 0,
+        firstChar: rawDesc.charAt(0),
+        isCapital: /^[А-ЯЁA-Z]$/.test(rawDesc.charAt(0)),
+      };
+
+      // 🔹 Остальные метрики (без изменений)
       const features = {
         has_forms: doc.querySelectorAll('input,select,textarea').length > 0,
         has_media: /@media/.test(code),
@@ -375,8 +390,11 @@ export default function App() {
         has_js_interactive: /addEventListener|fetch\s*\(|axios|\.on\s*=\s*|\.then\(|\.click/.test(code),
         has_responsive_img: /srcset|sizes|picture/.test(code),
         has_semantic: /<article|<section|<nav|<header|<footer|<main/.test(code),
+        authorInfo, // ← Добавлено
       };
+
       setAiFeatures(features);
+      setAiDoc(doc);
       setAiFilterMode(true);
     } catch (err) {
       console.error("Ошибка парсинга кода:", err);
