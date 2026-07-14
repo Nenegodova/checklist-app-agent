@@ -1,16 +1,14 @@
 import { useEffect, useState, useMemo, useCallback, useLayoutEffect } from "react";
-
 const DATA_VERSION = "1.1";
 const NOTES_TEMPLATE =
-`Вопросы к редакции:
+`Вопросы к редакции:
 —
-Вопросы к выпускающему:
+Вопросы к выпускающему:
 —
 Поставить блокер:
 —
-Правки для фотореда/дизайнера:
+Правки для фотореда/дизайнера:
 —`;
-
 const CONTENT_FILTERS = {
   tables: { label: "Таблицы", default: true },
   screenshots: { label: "Скрины", default: true },
@@ -18,7 +16,6 @@ const CONTENT_FILTERS = {
   poll: { label: "Опрос", default: true },
   infographic: { label: "Инфографика", default: true },
 };
-
 const buildContentFilters = () => {
   const result = {};
   Object.entries(CONTENT_FILTERS).forEach(([key, value]) => {
@@ -26,7 +23,6 @@ const buildContentFilters = () => {
   });
   return result;
 };
-
 const PRESETS = {
   default: {},
   invest: {
@@ -37,73 +33,73 @@ const PRESETS = {
   },
   shopping: {
     "Админка": [
-      { text: "В подвале стоит: Цены действительны на момент публикации" },
+      { text: "В подвале стоит: Цены действительны на момент публикации" },
       { _sortOrder: 3, text: "Тег noads" },
     ],
     "Текст": [
-      { text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точка, кроме последней, отбиты <br/>" },
+      { text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точка, кроме последней, отбиты <br/>" },
     ],
   },
   tests: {
     "Текст": [
-      { text: "В мини⁠-⁠тестах автор и подпись стоят перед лидом" },
-      { _sortOrder: 6, text: "Внутри конфига есть все необходимые склейки" },
+      { text: "В мини⁠-⁠тестах автор и подпись стоят перед лидом" },
+      { _sortOrder: 6, text: "Внутри конфига есть все необходимые склейки" },
     ],
     "Админка": [
-      { text: "Проверить автора обложки или источники" },
+      { text: "Проверить автора обложки или источники" },
       { text: "Тег *noadscalctest*" },
-      { text: "В больших тестах под обложкой указан иллюстратор" },
+      { text: "В больших тестах под обложкой указан иллюстратор" },
     ],
     "Прочее": [
-      { text: "В кайтене прикреплены ссылки на админку и конфиг" },
+      { text: "В кайтене прикреплены ссылки на админку и конфиг" },
       { links: [{ label: "Методичка тесты", url: "https://docs.google.com/document/d/1vBoENUtJI2UHtbBrLqVgPxuoEBE0yNvYhhATKmwiXzU/edit?tab=t.0#bookmark=id.sgzp2wu0gy8c" }] },
     ],
   },
   compare: { "Админка": [{ text: "Тег noads" }] },
   spending: {
     "Текст": [
-      { text: "В начале статьи стоит плашка panel с абзацами *p grade=\"secondary\"*" },
-      { text: "У авторов стоят анонимные аватарки anonym_male у мужчин и anonym_female у женщин, автор стоит после оглавления" },
+      { text: "В начале статьи стоит плашка panel с абзацами *p grade=\"secondary\"*" },
+      { text: "У авторов стоят анонимные аватарки anonym_male у мужчин и anonym_female у женщин, автор стоит после оглавления" },
       { text: "Траты обозначены *class=\"negative\"*" },
       { text: "Доходы обозначены *class=\"positive\"*" },
-      { text: "Все заголовки в дневниках трат кроме заголовков дней *h2 level=\"2\"*" },
+      { text: "Все заголовки в дневниках трат кроме заголовков дней *h2 level=\"2\"*" },
     ],
     "Админка": [
-      { text: "Нажата кнопка из сообщества" },
-      { text: "Подпись к обложке: Фотография — Ксения Михайлова" },
+      { text: "Нажата кнопка из сообщества" },
+      { text: "Подпись к обложке: Фотография — Ксения Михайлова" },
     ],
   },
   cd: {
     "Админка": [
-      { _sortOrder: 0, text: "В классических ЧД нет подзага" },
-      { _sortOrder: 1, text: "В подборке ЧД есть подзаг" },
-      { text: "Обложка с эмодзи с типом мейна «мини над заголовком»" },
-      { _sortOrder: 3, text: "Редакция Что делать + тематическая" },
-      { text: "Нажаты кнопки из сообщества и выбор редакции" },
-      { text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог⁠-⁠описания" },
-      { text: "В реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если его нет, то добавляем. В выдуманных проставляем тег вместе с другими. Если в статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще один технический тег: *feature⁠-⁠out.* Для опросов этот тег не нужен" },
-      { _sortOrder: 2, text: "В подборке ЧД основной заг начинается с о слов «Что делать, если:..»" },
-      { _sortOrder: 4, text: "В подборке ЧД url статьи всегда начинается с префикса «ask⁠-»" },
-      { text: "В классических ЧД цвет фона для обложек #2c2c2c" },
-      { text: "В подборке ЧД на обложке ОГ по три эмодзи" },
+      { _sortOrder: 0, text: "В классических ЧД нет подзага" },
+      { _sortOrder: 1, text: "В подборке ЧД есть подзаг" },
+      { text: "Обложка с эмодзи с типом мейна «мини над заголовком»" },
+      { _sortOrder: 4, text: "Редакция Что делать + тематическая" },
+      { text: "Нажаты кнопки из сообщества и выбор редакции" },
+      { text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог⁠-⁠описания" },
+      { text: "В реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если его нет, то добавляем. В выдуманных проставляем тег вместе с другими. Если в статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще один технический тег: *feature⁠-⁠out.* Для опросов этот тег не нужен" },
+      { _sortOrder: 2, text: "В подборке ЧД основной заг начинается с о слов «Что делать, если:..»" },
+      { _sortOrder: 3, text: "В подборке ЧД url статьи всегда начинается с префикса «ask⁠-»" },
+      { text: "В классических ЧД цвет фона для обложек #2c2c2c" },
+      { text: "В подборке ЧД на обложке ОГ по три эмодзи" },
     ],
     "Текст": [
-      { _sortOrder: 0, text: "В классических ЧД нет лида" },
-      { _sortOrder: 1, text: "В подборке ЧД есть лид" },
-      { text: "Есть автор вопроса и вопрос в плашке с *isbuble=\"true\"*" },
+      { _sortOrder: 0, text: "В классических ЧД нет лида" },
+      { _sortOrder: 1, text: "В подборке ЧД есть лид" },
+      { text: "Есть автор вопроса и вопрос в плашке с *isbuble=\"true\"*" },
       { _sortOrder: 2, text: "Есть автор ответа" },
-      { _sortOrder: 3, text: "В классических ЧД написание автора вопроса «спросил в Сообществе»/«спросила в Сообществе»" },
-      { _sortOrder: 4, text: "В классических ЧД заголовки *h2 level=\"2\"*" },
-      { _sortOrder: 5, text: "В подборке ЧД заголовки *h2*" },
-      { _sortOrder: 6, text: "В подборке ЧД у каждого вопроса стоит бирка с эмодзи" },
-      { text: "Если в конце статьи стоит список статей: вводное предложение выделяем болдом, для вводного предложения и списка используем шифт с * p grade=\"large\"*" },
-      { _sortOrder: 7, text: "В микро ЧД ответ на вопрос в плашке" },
-      { text: "В микро ЧД есть utm⁠-⁠метки у с сылок на внутренние статьи" },
-      { _sortOrder: 8, text: "В микро ЧД автор ответа с подписью «нашел ответ»/«нашла ответ»" },
+      { _sortOrder: 3, text: "В классических ЧД написание автора вопроса «спросил в Сообществе»/«спросила в Сообществе»" },
+      { _sortOrder: 4, text: "В классических ЧД заголовки *h2 level=\"2\"*" },
+      { _sortOrder: 5, text: "В подборке ЧД заголовки *h2*" },
+      { _sortOrder: 6, text: "В подборке ЧД у каждого вопроса стоит бирка с эмодзи" },
+      { text: "Если в конце статьи стоит список статей: вводное предложение выделяем болдом, для вводного предложения и списка используем шифт с * p grade=\"large\"*" },
+      { _sortOrder: 7, text: "В микро ЧД ответ на вопрос в плашке" },
+      { text: "В микро ЧД есть utm⁠-⁠метки у с сылок на внутренние статьи" },
+      { _sortOrder: 8, text: "В микро ЧД автор ответа с подписью «нашел ответ»/«нашла ответ»" },
     ],
     "Выпуск": [
-      { _sortOrder: 1, text: "Если материал сверстан в старом вопросе автора и нужно выпустить с новым url, то обязательно после публикации нужно настроить редирект" },
-      { sortOrder: 2, text: "В случае, когда после выпуска меняется обложка, пишем в тематическом чате соответствующей редакции и чате «Т–Ж + соцсети», что поменялась обложка, прикладываем ссылку на статью и новую обложку" },
+      { _sortOrder: 1, text: "Если материал сверстан в старом вопросе автора и нужно выпустить с новым url, то обязательно после публикации нужно настроить редирект" },
+      { sortOrder: 2, text: "В случае, когда после выпуска меняется обложка, пишем в тематическом чате соответствующей редакции и чате «Т–Ж + соцсети», что поменялась обложка, прикладываем ссылку на статью и новую обложку" },
     ],
     "Прочее": [
       { links: [{ label: "Методичка ЧД", url: "https://tinkoffjournal.kaiten.ru/documents/g/c4db513a-6478-46ae-967b-984c87b15af0" }] },
@@ -112,114 +108,111 @@ const PRESETS = {
   shorts: {
     "Админка": [
       { _sortOrder: 2, text: "Проставлен *тег noadsshort*" },
-      { text: "Среди потоков добавлены «Шорты», но не основным потоком" },
-      { text: "Нажата кнопка из сообщества и выбор редакции если вторая редакция UGC" },
-      { text: "Обложка внутри статьи отсутствует" },
-      { _sortOrder: 4, text: "Источник фото в подвале" },
+      { text: "Среди потоков добавлены «Шорты», но не основным потоком" },
+      { text: "Нажата кнопка из сообщества и выбор редакции если вторая редакция UGC" },
+      { text: "Обложка внутри статьи отсутствует" },
+      { _sortOrder: 4, text: "Источник фото в подвале" },
     ],
     "Текст": [
-      { _sortOrder: 4, text: "Подводка размещается в теге * p grade=\"secondary\"*, если она слишком длинная, то часть скрывается под кат" },
-      { _sortOrder: 1, text: "Оглавление стоит перед карточками-тайлами" },
-      { text: "У текста внутри шортов *grade=\"medium\"*" },
-      { _sortOrder: 3, text: "В заголовке нет эмодзи, если в карточке есть картинка" },
-      { text: "Для картинки-обтравки добавлен атрибут *image_style=\"picture\"*" },
-      { text: "В последней карточке, если это не рассылка, добавлена иконка потока или Telegram, в заголовке этой карточки нет эмодзи. В шортах иконки со скруглёнными углами" },
-      { text: "Проверить у ссылки на курс наличие хвоста, если его нет, запросить у редактора" },
-      { text: "Проверить у ссылки на анкету наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_ankета, вместо стандартного. Исключение — анкеты спорта" },
-      { text: "Проверить у ссылки на статью или поток наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_button" },
-      { text: "Дискрипшн находится внутри *<tiles></tiles>* и тега * p grade=\"small\"*." },
-      { text: "В дискрипшен под последней карточкой вынесена информация об актуальности цен и ценах в валюте (поскольку не используем тултипы), источниках данных, метках об иноагентах и т. д." },
-      { text: "У списка в конце шортов * p grade=\"secondary\"*" },
-      { text: "Список в конце шортов из 3–4 ссылок выстроен «лесенкой» если позволяет смысл. Вводное предложение — без жирного выделения" },
+      { _sortOrder: 4, text: "Подводка размещается в теге * p grade=\"secondary\"*, если она слишком длинная, то часть скрывается под кат" },
+      { _sortOrder: 1, text: "Оглавление стоит перед карточками-тайлами" },
+      { text: "У текста внутри шортов *grade=\"medium\"*" },
+      { _sortOrder: 3, text: "В заголовке нет эмодзи, если в карточке есть картинка" },
+      { text: "Для картинки-обтравки добавлен атрибут *image_style=\"picture\"*" },
+      { text: "В последней карточке, если это не рассылка, добавлена иконка потока или Telegram, в заголовке этой карточки нет эмодзи. В шортах иконки со скруглёнными углами" },
+      { text: "Проверить у ссылки на курс наличие хвоста, если его нет, запросить у редактора" },
+      { text: "Проверить у ссылки на анкету наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_ankета, вместо стандартного. Исключение — анкеты спорта" },
+      { text: "Проверить у ссылки на статью или поток наличие хвоста ?internal_source=tj_short_слаг-этого-шорта_any-page_button" },
+      { text: "Дискрипшн находится внутри *<tiles></tiles>* и тега * p grade=\"small\"*." },
+      { text: "В дискрипшен под последней карточкой вынесена информация об актуальности цен и ценах в валюте (поскольку не используем тултипы), источниках данных, метках об иноагентах и т. д." },
+      { text: "У списка в конце шортов * p grade=\"secondary\"*" },
+      { text: "Список в конце шортов из 3–4 ссылок выстроен «лесенкой» если позволяет смысл. Вводное предложение — без жирного выделения" },
     ],
     "Прочее": [
       { links: [{ label: "Методичка шорты", url: "https://tinkoffjournal.kaiten.ru/documents/g/c4db513a-6478-46ae-967b-984c87b15af0" }] },
     ],
   },
   ugc: {
-    "Админка": [{ text: "Нажата кнопка из сообщества" }],
+    "Админка": [{ text: "Нажата кнопка из сообщества" }],
     "Текст": [
       {
         _sortOrder: 2,
-        links: [{ label: "В текст добавлена актуальная плашка с ообщества", url: "https://docs.google.com/document/d/1U_YBVur4Rtjv5jEMY1Xas9Rr4TxdvenLlIBFbVxIBjg/edit?tab=t.0" }],
+        links: [{ label: "В текст добавлена актуальная плашка с ообщества", url: "https://docs.google.com/document/d/1U_YBVur4Rtjv5jEMY1Xas9Rr4TxdvenLlIBFbVxIBjg/edit?tab=t.0" }],
       },
     ],
   },
 };
-
 const PRESET_EXCLUDES = {
   cd: { "Текст": ["lead", "heading-levels", "editor-badge"], "Админка": ["cover-author", "cover-type", "utm", "credit"] },
   shorts: { "Текст": ["tooltip-link", "currency-tooltip", "lists-style", "utm"] },
 };
-
 const DATA = {
   "Админка": [
-    { text: "Проверить, что коллеги закрыли вкладку с визивигом" },
+    { text: "Проверить, что коллеги закрыли вкладку с визивигом" },
     { text: "Проверить формат" },
-    { text: "Ог⁠⁠-⁠⁠заг = заголовок статьи, ОГ-описание на месте" },
-    { text: "Перенести мету из комментария в кайтене в админку" },
+    { text: "Ог⁠⁠-⁠⁠заг = заголовок статьи, ОГ-описание на месте" },
+    { text: "Перенести мету из комментария в кайтене в админку" },
     { text: "Проверить скрытие" },
-    { text: "Если в затравке отсутствует знак вопроса, то стоит двоеточие" },
-    { id: "cover-type", text: "Проверить тип обложки, кредит к обложке в нужном месте (под обложкой/в подвале), наличие бирки на ОГ, текст на ОГ оттипирован (проставлены склейки)" },
-    { id: "credit", text: "Проверить автора обложки или источники" },
-    { links: [{ label: "Иноагенты и прочие враги в подвале", url: "https://tinkoffjournal.kaiten.ru/documents/d/05e4af49-d4af-433d-a183-528ac0d4da1a" }] },
-    {_sortOrder: 9999, text: "Мягкий перенос в заге", links: [{ label: "Символы", url: "https://symbl.cc/ru/00AD/" }, { label: "Правила", url: "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe" }] },
+    { text: "Если в затравке отсутствует знак вопроса, то стоит двоеточие" },
+    { id: "cover-type", text: "Проверить тип обложки, кредит к обложке в нужном месте (под обложкой/в подвале), наличие бирки на ОГ, текст на ОГ оттипирован (проставлены склейки)" },
+    { id: "credit", text: "Проверить автора обложки или источники" },
+    { links: [{ label: "Иноагенты и прочие враги в подвале", url: "https://tinkoffjournal.kaiten.ru/documents/d/05e4af49-d4af-433d-a183-528ac0d4da1a" }] },
+    {_sortOrder: 9999, text: "Мягкий перенос в заге", links: [{ label: "Символы", url: "https://symbl.cc/ru/00AD/" }, { label: "Правила", url: "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe" }] },
   ],
   "Текст": [
-    { text: "Подпись автора с маленькой буквы" },
-    { id: "lead", text: "Лид на месте, в конце точка" },
-    { text: "Якоря в оглавлении стоят верно. Двоеточие в оглавлении убрать" },
-    { id: "heading-levels", text: "Везде проставлены верные уровни заголовков (*h2*, *h2 level=\"2\"*, *h3* для плашек)" },
-    { text: "Проверить бирки над заголовками" },
-    { text: "Заменяем невидимые пробелы на *&nbsp;*" },
-    { text: "*&nbsp;* склеяны слова с частицами бы, же, ли; предлоги при, про, над, под, для, вне, обо, без" },
-    { text: "Внутри *<nobr></nobr>* стоят диапазоны чисел, составные наречия, °C, пишущиеся через дефис слова (до 4 символов от дефиса), числа, которые идут после того, что считаем (минут 15, iPhone 16), аббревиатуры-дополнения (страны ЕС, ставка ЦБ, Витамин C)" },
-    { text: "После эмодзи стоит пробел" },
-    { text: "Поправить типографирование: м², а не м2, 1/2, а не ½" },
-    { text: "Предлог, точка, восклицательный, вопросительный знак, двоеточие в ссылках, запятые вне ссылок" },
-    { text: "Точка, запятая, восклицательный, вопросительный знаки, двоеточие, точка с запятой в жире/марке" },
-    { text: "У сервисных плашек в последнем предложении отсутствует точка" },
+    { text: "Подпись автора с маленькой буквы" },
+    { id: "lead", text: "Лид на месте, в конце точка" },
+    { text: "Якоря в оглавлении стоят верно. Двоеточие в оглавлении убрать" },
+    { id: "heading-levels", text: "Везде проставлены верные уровни заголовков (*h2*, *h2 level=\"2\"*, *h3* для плашек)" },
+    { text: "Проверить бирки над заголовками" },
+    { text: "Заменяем невидимые пробелы на *&nbsp;*" },
+    { text: "*&nbsp;* склеяны слова с частицами бы, же, ли; предлоги при, про, над, под, для, вне, обо, без" },
+    { text: "Внутри *<nobr></nobr>* стоят диапазоны чисел, составные наречия, °C, пишущиеся через дефис слова (до 4 символов от дефиса), числа, которые идут после того, что считаем (минут 15, iPhone 16), аббревиатуры-дополнения (страны ЕС, ставка ЦБ, Витамин C)" },
+    { text: "После эмодзи стоит пробел" },
+    { text: "Поправить типографирование: м², а не м2, 1/2, а не ½" },
+    { text: "Предлог, точка, восклицательный, вопросительный знак, двоеточие в ссылках, запятые вне ссылок" },
+    { text: "Точка, запятая, восклицательный, вопросительный знаки, двоеточие, точка с запятой в жире/марке" },
+    { text: "У сервисных плашек в последнем предложении отсутствует точка" },
     { text: "Нет пустых атрибутов" },
     { id: "utm", text: "UTM метки отсутствуют" },
-    { id: "currency-tooltip", text: "У первого валютного фичера тултип: Суммы в рублях пересчитываются по актуальному курсу раз в день" },
-    { id: "tooltip-link", text: "Тултип не стоит рядом с ссылкой" },
-    { id: "lists-style", text: "Списки с цифрами и кастомные — с большой буквы, в конце точки. список с буллитами — с маленькой буквы, в конце точка, запятые" },
-    { text: "У плашек с авторами с тоит *hl isbubble=\"true\"*" },
-    { text: "Опрос на месте, в нем все склеено", feature: "poll" },
+    { id: "currency-tooltip", text: "У первого валютного фичера тултип: Суммы в рублях пересчитываются по актуальному курсу раз в день" },
+    { id: "tooltip-link", text: "Тултип не стоит рядом с ссылкой" },
+    { id: "lists-style", text: "Списки с цифрами и кастомные — с большой буквы, в конце точки. список с буллитами — с маленькой буквы, в конце точка, запятые" },
+    { text: "У плашек с авторами с тоит *hl isbubble=\"true\"*" },
+    { text: "Опрос на месте, в нем все склеено", feature: "poll" },
     { id: "editor-badge", text: "Верная плашка редакции" },
-    { text: "Расставить поля если нужно, они не должны с тоять рядом с баннерами, анкетами, картинками и таблицами" },
+    { text: "Расставить поля если нужно, они не должны с тоять рядом с баннерами, анкетами, картинками и таблицами" },
     { text: "Проверить виджеты, фичеры, баннеры, этажи, кат" },
   ],
   "Таблицы": [
     { text: "У таблицы есть заголовок" },
-    { text: "Проверить *table sticky-header=\"true\"* у таблиц с thead" },
+    { text: "Проверить *table sticky-header=\"true\"* у таблиц с thead" },
     { text: "Красиво отрегулированы ширины" },
-    { text: "Выравнивание по левому краю если: числа не сравниваются между собой, а используются как обозначение или порядковый номер, в колонке есть диапазоны, в колонке смешаны разные единицы измерения, в колонке используются валютные фичеры (в том числе есть ячейки с ним, а есть без него), в части ячеек нет числовых значений" },
-    { text: "Списки: пункты лежат внутри одной ячейки, вначале пункта стоит •, после буллита стоит пробел, каждый пункт с большой буквы, в конце пунктов нет знаков препинания, пункты разделяются <br/>" },
-    { text: "Если в таблице есть цены, то строки нужно отсортировать по убыванию цен" },
+    { text: "Выравнивание по левому краю если: числа не сравниваются между собой, а используются как обозначение или порядковый номер, в колонке есть диапазоны, в колонке смешаны разные единицы измерения, в колонке используются валютные фичеры (в том числе есть ячейки с ним, а есть без него), в части ячеек нет числовых значений" },
+    { text: "Списки: пункты лежат внутри одной ячейки, вначале пункта стоит •, после буллита стоит пробел, каждый пункт с большой буквы, в конце пунктов нет знаков препинания, пункты разделяются <br/>" },
+    { text: "Если в таблице есть цены, то строки нужно отсортировать по убыванию цен" },
   ],
   "Картинки": [
-    { text: "Источники под фотками заменены на ©", feature: "images" },
-    { text: "Скрины ретиновые и чистые, текст читаем, соблюдены поля, проставлен *prop=\"bordered\"* если фон сливается с фоном страницы", feature: "screenshots" },
-    { text: "Проверить необходимость *prop=\"bordered\"* у видео", feature: "images" },
-    { text: "Для инфографики проставлен *prop=\"bordered rounded\"*", feature: "infographic" },
-    { text: "В подписи к инфографике есть Источник: ", feature: "infographic" },
-    { text: "Проверить в кайтене наличие комментария от фотореда о размере картинок или фоторам", feature: "images" },
-    { text: "Проверить есть ли засветы или вотермарки на картинках от фотореда", feature: "images" },
-    { text: "При необходимости заблюрены все персональные данные", feature: "images" },
+    { text: "Источники под фотками заменены на ©", feature: "images" },
+    { text: "Скрины ретиновые и чистые, текст читаем, соблюдены поля, проставлен *prop=\"bordered\"* если фон сливается с фоном страницы", feature: "screenshots" },
+    { text: "Проверить необходимость *prop=\"bordered\"* у видео", feature: "images" },
+    { text: "Для инфографики проставлен *prop=\"bordered rounded\"*", feature: "infographic" },
+    { text: "В подписи к инфографике есть Источник: ", feature: "infographic" },
+    { text: "Проверить в кайтене наличие комментария от фотореда о размере картинок или фоторам", feature: "images" },
+    { text: "Проверить есть ли засветы или вотермарки на картинках от фотореда", feature: "images" },
+    { text: "При необходимости заблюрены все персональные данные", feature: "images" },
   ],
   "Выпуск": [
-    { text: "Проверить метку разметка, если есть доп. авторы" },
-    { text: "Проверить комментарии в кайтене" },
-    { text: "В кайтен прикрепить ссылку на материал после выпуска и опенграф-картинку" },
-    { text: "После выпуска проверить материал на главной" },
+    { text: "Проверить метку разметка, если есть доп. авторы" },
+    { text: "Проверить комментарии в кайтене" },
+    { text: "В кайтен прикрепить ссылку на материал после выпуска и опенграф-картинку" },
+    { text: "После выпуска проверить материал на главной" },
   ],
   "Прочее": [
-    { text: "В ссылке шаблона гугл⁠-⁠дока для копирования */edit* заменен на */copy*." },
+    { text: "В ссылке шаблона гугл⁠-⁠дока для копирования */edit* заменен на */copy*." },
     { links: [{ label: "Методички общие", url: "https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994" }] },
   ],
 };
-
 // --- Helpers ---
 const readStorageJSON = (key) => {
   try {
@@ -231,7 +224,6 @@ const readStorageJSON = (key) => {
     return null;
   }
 };
-
 const buildCollapsed = (data, prev = {}) => {
   const next = {};
   Object.keys(data).forEach((cat) => {
@@ -239,7 +231,6 @@ const buildCollapsed = (data, prev = {}) => {
   });
   return next;
 };
-
 const buildTasks = (data) => {
   const initial = {};
   Object.keys(data).forEach((cat) => {
@@ -253,7 +244,6 @@ const buildTasks = (data) => {
   });
   return initial;
 };
-
 function useMediaQuery(query) {
   const getMatches = () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false);
   const [matches, setMatches] = useState(getMatches);
@@ -266,7 +256,6 @@ function useMediaQuery(query) {
   }, [query]);
   return matches;
 }
-
 // ИСПРАВЛЕНО: функция вынесена наружу, ключи генерируются через индекс map (стабильно)
 const renderTextWithLinks = (text, dark) => {
   if (!text) return null;
@@ -290,7 +279,6 @@ const renderTextWithLinks = (text, dark) => {
     return <span key={i}>{part}</span>;
   });
 };
-
 // --- Component ---
 export default function App() {
   const [dark, setDark] = useState(() => {
@@ -302,7 +290,6 @@ export default function App() {
       return false;
     }
   });
-
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -314,13 +301,11 @@ export default function App() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
-
   const [preset, setPreset] = useState(() => localStorage.getItem("preset") || "default");
   const [contentFilters, setContentFilters] = useState(() => readStorageJSON("contentFilters") || buildContentFilters());
   const [focusMode, setFocusMode] = useState(false);
   const [notes, setNotes] = useState(() => localStorage.getItem("notes") || "");
   const [notesOpen, setNotesOpen] = useState(false);
-
   useLayoutEffect(() => {
     document.documentElement.className = dark ? "dark" : "";
     const currentValue = localStorage.getItem("dark");
@@ -328,11 +313,9 @@ export default function App() {
       localStorage.setItem("dark", String(dark));
     }
   }, [dark]);
-
   const currentData = useMemo(() => {
     const clone = typeof structuredClone === "function" ? structuredClone(DATA) : JSON.parse(JSON.stringify(DATA));
     const presetData = PRESETS[preset];
-
     if (presetData) {
       Object.keys(presetData).forEach((cat) => {
         if (!clone[cat]) clone[cat] = [];
@@ -359,7 +342,6 @@ export default function App() {
     }
     return clone;
   }, [preset]);
-
   const [tasks, setTasks] = useState(() => {
     const savedVersion = localStorage.getItem("version");
     const saved = readStorageJSON("checklist");
@@ -371,16 +353,13 @@ export default function App() {
     }
     return saved || buildTasks(currentData);
   });
-
   const [collapsed, setCollapsed] = useState(() => readStorageJSON("collapsed") || buildCollapsed(currentData));
-
   useEffect(() => {
     localStorage.setItem("contentFilters", JSON.stringify(contentFilters));
     localStorage.setItem("checklist", JSON.stringify(tasks));
     localStorage.setItem("collapsed", JSON.stringify(collapsed));
     localStorage.setItem("notes", notes);
   }, [contentFilters, tasks, collapsed, notes]);
-
   useEffect(() => {
     setTasks((prev) => {
       const next = {};
@@ -398,14 +377,12 @@ export default function App() {
     });
     setCollapsed((prev) => buildCollapsed(currentData, prev));
   }, [currentData]);
-
   const toggle = useCallback((cat, index) => {
     setTasks((prev) => {
       const updated = prev[cat].map((t, i) => (i === index ? { ...t, done: !t.done } : t));
       return { ...prev, [cat]: updated };
     });
   }, []);
-
   useLayoutEffect(() => {
     setCollapsed((prev) => {
       let next = { ...prev };
@@ -424,7 +401,6 @@ export default function App() {
       return next;
     });
   }, [tasks]);
-
   const resetAll = useCallback(() => {
     setTasks((prev) => {
       const cleared = {};
@@ -434,7 +410,6 @@ export default function App() {
       return cleared;
     });
   }, []);
-
   const hardReset = useCallback(() => {
     ["preset", "notes", "checklist", "collapsed", "contentFilters", "version", "dark"].forEach((key) => localStorage.removeItem(key));
     localStorage.setItem("version", DATA_VERSION);
@@ -446,16 +421,13 @@ export default function App() {
     setTasks(buildTasks(DATA));
     setCollapsed(buildCollapsed(DATA));
   }, []);
-
   const toggleCollapse = useCallback((cat) => {
     setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
   }, []);
-
   const allTasks = Object.values(tasks ?? {}).flat();
   const doneTasks = allTasks.filter((t) => t.done).length;
   const totalTasks = allTasks.length;
   const percent = totalTasks === 0 ? 0 : Math.round((doneTasks / totalTasks) * 100);
-
   const isMobile = useMediaQuery("(max-width: 900px)");
   const textColor = dark ? "#e8e8ea" : "#111";
   const mutedColor = dark ? "#a1a1aa" : "#555";
@@ -464,26 +436,21 @@ export default function App() {
   const bg = dark ? "#111315" : "#F6F7F9";
   const title = dark ? "#FFFFFF" : "#111827";
   const category = dark ? "#F3F4F6" : "#111827";
-
   const controlBase = {
     height: 34, padding: "6px 12px", borderRadius: 10, fontSize: 13, lineHeight: "20px",
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     cursor: "pointer", transition: "all 0.15s ease", boxShadow: "none", outline: "none",
   };
-
   const makeControl = (isDark) => ({
     ...controlBase, border: `1px solid ${isDark ? "#2a2a2e" : "#d1d5db"}`,
     background: isDark ? "#1A1D21" : "#ffffff", color: isDark ? "#e8e8ea" : "#111827",
   });
-
   const btn = makeControl(dark);
-
   const ui = {
     categoryTitle: { cursor: "pointer", marginBottom: 12, fontSize: 15, fontWeight: 600, color: category, display: "flex", alignItems: "center", gap: 16 },
     card: { display: "flex", alignItems: "flex-start", gap: 10, padding: "16px 18px", border: `1px solid ${border}`, background: card, textAlign: "left", borderRadius: 18, transition: "all 0.15s ease", boxShadow: dark ? "0 1px 2px rgba(0,0,0,0.3)" : "0 1px 2px rgba(0,0,0,0.05)" },
     taskText: { flex: 1, fontSize: 13, lineHeight: "18px", color: textColor, textDecoration: "none" },
   };
-
   return (
     <div className={dark ? "dark" : ""} style={{ padding: 30, minHeight: "100vh", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial", background: bg, color: textColor }}>
       <style>{`
@@ -586,7 +553,7 @@ export default function App() {
               <button type="button" onClick={() => setNotes("")}
                 style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#3a1f1f" : "#fee2e2", color: dark ? "#fca5a5" : "#991b1b", fontSize: 12, cursor: "pointer" }}>Очистить</button>
             </div>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Заметки по ходу проверки: вопросы, правки и всё, что не хочется потерять — можно записывать с юда, чтобы не держать в голове"
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Заметки по ходу проверки: вопросы, правки и всё, что не хочется потерять — можно записывать сюда, чтобы не держать в голове"
               style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
           </div>
         )}
