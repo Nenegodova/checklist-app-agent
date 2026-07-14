@@ -526,21 +526,17 @@ export default function App() {
           )}
         </div>
   {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
-{tasks && Object.keys(tasks).map((cat) => {
+{Object.keys(tasks).map((cat) => {
   const categoryTasks = tasks[cat] || [];
-
-  // 🎯 Границы влияния AI-фильтра: только содержательные разделы
   const AI_ALLOWED_CATEGORIES = ["Текст", "Таблицы", "Картинки"];
   const isAiCategory = aiFilterMode && aiFeatures && AI_ALLOWED_CATEGORIES.includes(cat);
 
-  // 🔍 1. Формируем списки разрешённых ID и Feature
   const allowedIds = new Set();
   const allowedFeatures = new Set();
   if (aiFilterMode && aiFeatures) {
     Object.entries(AI_FEATURE_TO_TASK_IDS).forEach(([aiKey, ids]) => {
       if (aiFeatures[aiKey]) ids.forEach(id => allowedIds.add(id));
     });
-    // AI detect media -> показываем все media-задачи
     if (aiFeatures.has_images) {
       allowedFeatures.add("images");
       allowedFeatures.add("screenshots");
@@ -548,10 +544,19 @@ export default function App() {
     }
   }
 
-  // ✅ 2. Проверяем, есть ли хоть один элемент для показа
   const hasVisible = categoryTasks.some(task => {
     const baseVisible = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
     if (!baseVisible) return false;
+    if (isAiCategory && aiFeatures?.authorInfo) {
+      const { isEmpty, isCapital, text } = aiFeatures.authorInfo;
+      const taskLower = task.text.toLowerCase();
+      if (taskLower.includes('описание автора') || taskLower.includes('автор пустое')) {
+        return isEmpty; // Показываем ТОЛЬКО если пусто
+      }
+      if (taskLower.includes('подпись автора с маленькой буквы')) {
+        return isEmpty || isCapital; // Показываем, если пусто или с заглавной
+      }
+    }
     if (isAiCategory) {
       if (cat === "Таблицы") return aiFeatures.has_tables;
       if (task.feature) return allowedFeatures.has(task.feature);
@@ -561,10 +566,19 @@ export default function App() {
   });
   if (!hasVisible) return null;
 
-  // 📊 3. Точный подсчёт для шапки категории
   const visibleCount = categoryTasks.filter(task => {
     const base = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
     if (!base) return false;
+    if (isAiCategory && aiFeatures?.authorInfo) {
+      const { isEmpty, isCapital, text } = aiFeatures.authorInfo;
+      const taskLower = task.text.toLowerCase();
+      if (taskLower.includes('описание автора') || taskLower.includes('автор пустое')) {
+        return isEmpty;
+      }
+      if (taskLower.includes('подпись автора с маленькой буквы')) {
+        return isEmpty || isCapital;
+      }
+    }
     if (isAiCategory) {
       if (cat === "Таблицы") return aiFeatures.has_tables;
       if (task.feature) return allowedFeatures.has(task.feature);
@@ -585,19 +599,19 @@ export default function App() {
       {!collapsed[cat] && (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {categoryTasks.map((task, i) => {
-            // 🛡️ Базовый фильтр (ручные переключатели Контент)
             const baseVisible = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
-            
-            // 🤖 Точечный AI-фильтр (только для разрешённых категорий)
             let aiVisible = true;
-            if (isAiCategory) {
-              if (cat === "Таблицы") aiVisible = aiFeatures.has_tables;
-              else if (task.feature) aiVisible = allowedFeatures.has(task.feature);
-              else if (task.id) aiVisible = allowedIds.has(task.id);
+            if (isAiCategory && aiFeatures?.authorInfo) {
+              const { isEmpty, isCapital } = aiFeatures.authorInfo;
+              const taskLower = task.text.toLowerCase();
+              if (taskLower.includes('описание автора') || taskLower.includes('автор пустое')) {
+                aiVisible = isEmpty;
+              }
+              if (taskLower.includes('подпись автора с маленькой буквы')) {
+                aiVisible = isEmpty || isCapital;
+              }
             }
-
             if (!baseVisible || !aiVisible) return null;
-
             return (
               <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
                 <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
