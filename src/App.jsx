@@ -507,106 +507,104 @@ export default function App() {
             </div>
           )}
         </div>
-        {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
-        {(() => {
-          // 🎯 Границы влияния AI-фильтра: только содержательные разделы
-          const AI_ALLOWED_CATEGORIES = ["Текст", "Таблицы", "Картинки"];
-          const isAiCategory = aiFilterMode && aiFeatures && AI_ALLOWED_CATEGORIES.includes(cat);
+  {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
+{tasks && Object.keys(tasks).map((cat) => {
+  const categoryTasks = tasks[cat] || [];
 
-          // 🔍 1. Формируем списки разрешённых ID и Feature для текущего анализа кода
-          const allowedIds = new Set();
-          const allowedFeatures = new Set();
-          if (aiFilterMode && aiFeatures) {
-            Object.entries(AI_FEATURE_TO_TASK_IDS).forEach(([aiKey, ids]) => {
-              if (aiFeatures[aiKey]) ids.forEach(id => allowedIds.add(id));
-            });
-            // AI detect media -> показываем все media-задачи
-            if (aiFeatures.has_images) {
-              allowedFeatures.add("images");
-              allowedFeatures.add("screenshots");
-              allowedFeatures.add("infographic");
-            }
-          }
+  // 🎯 Границы влияния AI-фильтра: только содержательные разделы
+  const AI_ALLOWED_CATEGORIES = ["Текст", "Таблицы", "Картинки"];
+  const isAiCategory = aiFilterMode && aiFeatures && AI_ALLOWED_CATEGORIES.includes(cat);
 
-          // ✅ 2. Проверяем, есть ли хоть один элемент для показа в этой категории
-          const hasVisible = categoryTasks.some(task => {
-            const baseVisible = (cat !== "Таблицы" || contentFilters.tables) &&
-              (!task.feature || contentFilters[task.feature]);
-            if (!baseVisible) return false;
+  // 🔍 1. Формируем списки разрешённых ID и Feature
+  const allowedIds = new Set();
+  const allowedFeatures = new Set();
+  if (aiFilterMode && aiFeatures) {
+    Object.entries(AI_FEATURE_TO_TASK_IDS).forEach(([aiKey, ids]) => {
+      if (aiFeatures[aiKey]) ids.forEach(id => allowedIds.add(id));
+    });
+    // AI detect media -> показываем все media-задачи
+    if (aiFeatures.has_images) {
+      allowedFeatures.add("images");
+      allowedFeatures.add("screenshots");
+      allowedFeatures.add("infographic");
+    }
+  }
 
+  // ✅ 2. Проверяем, есть ли хоть один элемент для показа
+  const hasVisible = categoryTasks.some(task => {
+    const baseVisible = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
+    if (!baseVisible) return false;
+    if (isAiCategory) {
+      if (cat === "Таблицы") return aiFeatures.has_tables;
+      if (task.feature) return allowedFeatures.has(task.feature);
+      if (task.id) return allowedIds.has(task.id);
+    }
+    return true;
+  });
+  if (!hasVisible) return null;
+
+  // 📊 3. Точный подсчёт для шапки категории
+  const visibleCount = categoryTasks.filter(task => {
+    const base = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
+    if (!base) return false;
+    if (isAiCategory) {
+      if (cat === "Таблицы") return aiFeatures.has_tables;
+      if (task.feature) return allowedFeatures.has(task.feature);
+      if (task.id) return allowedIds.has(task.id);
+    }
+    return true;
+  }).length;
+
+  return (
+    <div key={cat} style={{ marginBottom: 20 }}>
+      <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
+        <span>{cat}</span>
+        <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
+          {visibleCount}/{categoryTasks.length} {visibleCount === categoryTasks.length ? " ✓" : ""}
+        </span>
+      </div>
+      {!collapsed[cat] && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {categoryTasks.map((task, i) => {
+            // 🛡️ Базовый фильтр (ручные переключатели Контент)
+            const baseVisible = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
+            
+            // 🤖 Точечный AI-фильтр (только для разрешённых категорий)
+            let aiVisible = true;
             if (isAiCategory) {
-              if (cat === "Таблицы") return aiFeatures.has_tables;
-              if (task.feature) return allowedFeatures.has(task.feature);
-              if (task.id) return allowedIds.has(task.id);
+              if (cat === "Таблицы") aiVisible = aiFeatures.has_tables;
+              else if (task.feature) aiVisible = allowedFeatures.has(task.feature);
+              else if (task.id) aiVisible = allowedIds.has(task.id);
             }
-            return true; // Задачи без id/feature (базовая проверка текста) всегда видны
-          });
-          if (!hasVisible) return null;
 
-          // 📊 3. Точный подсчёт для шапки категории
-          const visibleCount = categoryTasks.filter(task => {
-            const base = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
-            if (!base) return false;
-            if (isAiCategory) {
-              if (cat === "Таблицы") return aiFeatures.has_tables;
-              if (task.feature) return allowedFeatures.has(task.feature);
-              if (task.id) return allowedIds.has(task.id);
-            }
-            return true;
-          }).length;
+            if (!baseVisible || !aiVisible) return null;
 
-          return (
-            <div key={cat} style={{ marginBottom: 20 }}>
-              <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
-                <span>{cat}</span>
-                <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
-                  {visibleCount}/{categoryTasks.length} {visibleCount === categoryTasks.length ? " ✓" : ""}
-                </span>
-              </div>
-              {!collapsed[cat] && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {categoryTasks.map((task, i) => {
-                    // 🛡️ Базовый фильтр (ручные переключатели Контент)
-                    const baseVisible = (cat !== "Таблицы" || contentFilters.tables) &&
-                      (!task.feature || contentFilters[task.feature]);
-
-                    // 🤖 Точечный AI-фильтр (только для разрешённых категорий)
-                    let aiVisible = true;
-                    if (isAiCategory) {
-                      if (cat === "Таблицы") aiVisible = aiFeatures.has_tables;
-                      else if (task.feature) aiVisible = allowedFeatures.has(task.feature);
-                      else if (task.id) aiVisible = allowedIds.has(task.id);
-                      // Остальные текстовые чекбоксы (без id/feature) всегда показываем
-                    }
-
-                    if (!baseVisible || !aiVisible) return null;
-
-                    return (
-                      <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
-                        <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
-                          style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
-                        <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
-                          {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
-                          {task.links?.length > 0 && (
-                            <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
-                              {task.links.map((link) => (
-                                <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
-                                  style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db" }}>
-                                  {link.label}
-                                </a>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </label>
-                    );
-                  })}
+            return (
+              <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
+                <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
+                  style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
+                <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
+                  {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
+                  {task.links?.length > 0 && (
+                    <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
+                      {task.links.map((link) => (
+                        <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
+                           style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db" }}>
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })()}
+              </label>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+})}
         {/* --- Заметки (плавающая панель) --- */}
         <div style={{ position: "fixed", right: 24, bottom: 24, zIndex: 999 }}>
           {notesOpen && (
