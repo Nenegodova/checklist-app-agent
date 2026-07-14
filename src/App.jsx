@@ -292,6 +292,25 @@ const renderTextWithLinks = (text, dark) => {
   });
 };
 
+function evaluateTaskRule(doc, taskText, rules) {
+  const rule = rules[taskText];
+  if (!rule) return true; // Нет правила → показываем (безопасно)
+
+  try {
+    const el = rule.selector ? doc.querySelector(rule.selector) : null;
+    switch (rule.test) {
+      case "exists": return !!el;
+      case "isEmpty": return !el || el.textContent.trim().length === 0;
+      case "firstCharLower": return el && /^[а-яёА-ЯЁ]/.test(el.textContent.trim()) && el.textContent.trim().length > 0;
+      case "isCapital": return el && /^[А-ЯЁA-Z]/.test(el.textContent.trim());
+      case "noUtm": return !/<a\s+[^>]*\bhref="[^"]*\?utm_/.test(doc.body.innerHTML);
+      default: return true;
+    }
+  } catch {
+    return true;
+  }
+}
+
 // --- Component ---
 export default function App() {
   const [dark, setDark] = useState(() => {
@@ -353,6 +372,21 @@ export default function App() {
     has_js_interactive: ["tooltip-link", "currency-tooltip"],
     has_responsive_img: ["cover-type"],
     has_semantic: ["heading-levels", "lead"],
+  };
+
+    // 📦 ДЕКЛАРАТИВНЫЕ ПРАВИЛА ФИЛЬТРАЦИИ (редактировать без кода)
+  const FILTER_RULES = {
+    // Формат: "Текст чекбокса": { условие }
+    "Описание автора пустое": { selector: "author > description", test: "isEmpty" },
+    "Подпись автора с маленькой буквы": { selector: "author > description", test: "firstCharLower" },
+    "Есть таблицы": { selector: "table", test: "exists" },
+    "Есть картинки/видео": { selector: "img,picture,video", test: "exists" },
+    "Есть формы/поля": { selector: "input,select,textarea", test: "exists" },
+    "Заголовки h2 level=\"2\"": { selector: 'h2[level="2"]', test: "exists" },
+    "У плашек авторов hl isbubble=\"true\"": { selector: 'hl[isbubble="true"]', test: "exists" },
+    "Есть <lead>": { selector: "lead", test: "exists" },
+    "Есть <contents>": { selector: "contents", test: "exists" },
+    "UTM метки отсутствуют": { selector: null, test: "noUtm" }, // проверка по regex
   };
 
   // ИСПРАВЛЕНО: убран alert, добавлена обработка ошибок
@@ -545,48 +579,26 @@ export default function App() {
     }
   }
 
-  const hasVisible = categoryTasks.some(task => {
+  // 🔄 Единая функция проверки видимости задачи
+  const isTaskVisible = (task) => {
     const baseVisible = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
     if (!baseVisible) return false;
-    if (isAiCategory && aiFeatures?.authorInfo) {
-      const { isEmpty, isCapital, text } = aiFeatures.authorInfo;
-      const taskLower = task.text.toLowerCase();
-      if (taskLower.includes('описание автора') || taskLower.includes('автор пустое')) {
-        return isEmpty; // Показываем ТОЛЬКО если пусто
-      }
-      if (taskLower.includes('подпись автора с маленькой буквы')) {
-        return isEmpty || isCapital; // Показываем, если пусто или с заглавной
-      }
-    }
-    if (isAiCategory) {
-      if (cat === "Таблицы") return aiFeatures.has_tables;
-      if (task.feature) return allowedFeatures.has(task.feature);
-      if (task.id) return allowedIds.has(task.id);
-    }
-    return true;
-  });
-  if (!hasVisible) return null;
 
-  const visibleCount = categoryTasks.filter(task => {
-    const base = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
-    if (!base) return false;
-    if (isAiCategory && aiFeatures?.authorInfo) {
-      const { isEmpty, isCapital, text } = aiFeatures.authorInfo;
-      const taskLower = task.text.toLowerCase();
-      if (taskLower.includes('описание автора') || taskLower.includes('автор пустое')) {
-        return isEmpty;
-      }
-      if (taskLower.includes('подпись автора с маленькой буквы')) {
-        return isEmpty || isCapital;
-      }
-    }
     if (isAiCategory) {
-      if (cat === "Таблицы") return aiFeatures.has_tables;
+      if (cat === "Таблицы" && aiFeatures) return aiFeatures.has_tables;
       if (task.feature) return allowedFeatures.has(task.feature);
       if (task.id) return allowedIds.has(task.id);
     }
+
+    // ⚡ Проверяем декларативные правила
+    if (FILTER_RULES[task.text]) {
+      return evaluateTaskRule(aiDoc || document, task.text, FILTER_RULES);
+    }
     return true;
-  }).length;
+  };
+
+  const visibleTasks = categoryTasks.filter(isTaskVisible);
+  if (visibleTasks.length === 0) return null;
 
   return (
     <div key={cat} style={{ marginBottom: 20 }}>
@@ -594,28 +606,16 @@ export default function App() {
         <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
         <span>{cat}</span>
         <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
-          {visibleCount}/{categoryTasks.length} {visibleCount === categoryTasks.length ? " ✓" : ""}
+          {visibleTasks.length}/{categoryTasks.length} {visibleTasks.length === categoryTasks.length ? " ✓" : ""}
         </span>
       </div>
       {!collapsed[cat] && (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {categoryTasks.map((task, i) => {
-            const baseVisible = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
-            let aiVisible = true;
-            if (isAiCategory && aiFeatures?.authorInfo) {
-              const { isEmpty, isCapital } = aiFeatures.authorInfo;
-              const taskLower = task.text.toLowerCase();
-              if (taskLower.includes('описание автора') || taskLower.includes('автор пустое')) {
-                aiVisible = isEmpty;
-              }
-              if (taskLower.includes('подпись автора с маленькой буквы')) {
-                aiVisible = isEmpty || isCapital;
-              }
-            }
-            if (!baseVisible || !aiVisible) return null;
+          {visibleTasks.map((task) => {
+            const idx = categoryTasks.indexOf(task);
             return (
               <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
-                <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
+                <input type="checkbox" checked={task.done} onChange={() => toggle(cat, idx)} aria-label={task.text}
                   style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
                 <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
                   {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
