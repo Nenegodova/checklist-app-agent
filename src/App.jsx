@@ -3,7 +3,7 @@ const DATA_VERSION = "1.1";
 const NOTES_TEMPLATE =
 `Вопросы к редакции:
 —
-Поставить блокер:
+Поставить блокер пи:
 —
 Правки для фотореда/дизайнера:
 —`;
@@ -302,112 +302,73 @@ export default function App() {
   const [preset, setPreset] = useState(() => localStorage.getItem("preset") || "default");
   const [contentFilters, setContentFilters] = useState(() => readStorageJSON("contentFilters") || buildContentFilters());
   const [focusMode, setFocusMode] = useState(false);
-  const [notes, setNotes] = useState(() => localStorage.getItem("notes") || "");
-  const [notesOpen, setNotesOpen] = useState(false);
-  useLayoutEffect(() => {
-    document.documentElement.className = dark ? "dark" : "";
-    const currentValue = localStorage.getItem("dark");
-    if (currentValue !== String(dark)) {
-      localStorage.setItem("dark", String(dark));
-    }
-  }, [dark]);
-  const currentData = useMemo(() => {
-    const clone = typeof structuredClone === "function" ? structuredClone(DATA) : JSON.parse(JSON.stringify(DATA));
-    const presetData = PRESETS[preset];
-    if (presetData) {
-      Object.keys(presetData).forEach((cat) => {
-        if (!clone[cat]) clone[cat] = [];
-        const baseItems = clone[cat].map((item, i) => ({ ...item, _sortOrder: item._sortOrder ?? i }));
-        const presetItems = presetData[cat].map((item) => ({ ...item, _sortOrder: item._sortOrder ?? 9999 }));
-        clone[cat] = [...baseItems, ...presetItems].sort((a, b) => (a._sortOrder ?? Infinity) - (b._sortOrder ?? Infinity));
-      });
-    } else {
-      Object.keys(clone).forEach((cat) => {
-        clone[cat] = clone[cat]
-          .map((item, i) => ({ ...item, _sortOrder: item._sortOrder ?? i }))
-          .sort((a, b) => (a._sortOrder ?? Infinity) - (b._sortOrder ?? Infinity));
-      });
-    }
-    const excludes = PRESET_EXCLUDES[preset];
-    if (excludes) {
-      Object.entries(excludes).forEach(([cat, ids]) => {
-        if (!clone[cat]) return;
-        clone[cat] = clone[cat].filter((item) => {
-          const itemId = item.id || item.text;
-          return !ids.includes(itemId);
-        });
-      });
-    }
-    return clone;
-  }, [preset]);
-  const [tasks, setTasks] = useState(() => {
-    const savedVersion = localStorage.getItem("version");
-    const saved = readStorageJSON("checklist");
-    if (savedVersion !== DATA_VERSION) {
-      localStorage.removeItem("checklist");
-      localStorage.removeItem("collapsed");
-      localStorage.setItem("version", DATA_VERSION);
-      return buildTasks(currentData);
-    }
-    return saved || buildTasks(currentData);
+
+// --- AI АГЕНТ: Состояния ---
+const [aiCode, setAiCode] = useState("");
+const [aiFeatures, setAiFeatures] = useState(null);
+const [aiFilterMode, setAiFilterMode] = useState(false);
+
+  // ИСПРАВЛЕНО: маппинг привязан к РЕАЛЬНЫМ id из вашего DATA
+const AI_FEATURE_TO_TASK_IDS = {
+  has_forms: ["lists-style", "editor-badge", "utm"],
+  has_media: ["credit", "cover-type"],
+  has_flex_grid: ["lists-style"],
+  has_images: ["credit", "cover-type"],
+  has_tables: ["lists-style"],
+  has_meta: ["heading-levels", "lead"],
+  has_labels: ["lists-style", "editor-badge"],
+  has_js_interactive: ["tooltip-link", "currency-tooltip"],
+  has_responsive_img: ["cover-type"],
+  has_semantic: ["heading-levels", "lead"],
+};
+
+  // ИСПРАВЛЕНО: убран alert, добавлена обработка ошибок
+const analyzeCode = useCallback((code) => {
+  if (!code.trim()) return;
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(code, 'text/html');
+    const features = {
+      has_forms: doc.querySelectorAll('input,select,textarea').length > 0,
+      has_media: /@media/.test(code),
+      has_flex_grid: /display:\s*(flex|grid|inline-flex|inline-grid)/.test(code),
+      has_images: doc.querySelectorAll('img,picture,video').length > 0,
+      has_tables: doc.querySelectorAll('table').length > 0,
+      has_meta: doc.querySelector('meta[name="description"]') !== null,
+      has_labels: Array.from(doc.querySelectorAll('input,select,textarea')).every(el => {
+        const parent = el.closest('label');
+        const byFor = parent ? el.id && doc.querySelector(`label[for="${el.id}"]`) : false;
+        return parent || byFor;
+      }),
+      has_js_interactive: /addEventListener|fetch\s*\(|axios|\.on\s*=\s*|\.then\(|\.click/.test(code),
+      has_responsive_img: /srcset|sizes|picture/.test(code),
+      has_semantic: /<article|<section|<nav|<header|<footer|<main/.test(code),
+    };
+    setAiFeatures(features);
+    setAiFilterMode(true);
+  } catch (err) {
+    console.error("Ошибка парсинга кода:", err);
+  }
+}, []);
+
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => setAiCode(ev.target.result);
+  reader.readAsText(file);
+};
+
+const resetAll = useCallback(() => {
+  setTasks((prev) => {
+    const cleared = {};
+    Object.keys(prev).forEach((cat) => {
+      cleared[cat] = prev[cat].map((t) => ({ ...t, done: false }));
+    });
+    return cleared;
   });
-  const [collapsed, setCollapsed] = useState(() => readStorageJSON("collapsed") || buildCollapsed(currentData));
-  useEffect(() => {
-    localStorage.setItem("contentFilters", JSON.stringify(contentFilters));
-    localStorage.setItem("checklist", JSON.stringify(tasks));
-    localStorage.setItem("collapsed", JSON.stringify(collapsed));
-    localStorage.setItem("notes", notes);
-  }, [contentFilters, tasks, collapsed, notes]);
-  useEffect(() => {
-    setTasks((prev) => {
-      const next = {};
-      Object.keys(currentData).forEach((cat) => {
-        next[cat] = currentData[cat].map((t) => {
-          const id = typeof t === "string" ? t : t.id || t.text;
-          const text = typeof t === "string" ? t : t.text;
-          const links = typeof t === "string" ? [] : t.links || [];
-          const feature = typeof t === "string" ? null : t.feature || null;
-          const old = prev?.[cat]?.find((x) => x.id === id);
-          return { id, text, links, feature, done: old?.done ?? false };
-        });
-      });
-      return next;
-    });
-    setCollapsed((prev) => buildCollapsed(currentData, prev));
-  }, [currentData]);
-  const toggle = useCallback((cat, index) => {
-    setTasks((prev) => {
-      const updated = prev[cat].map((t, i) => (i === index ? { ...t, done: !t.done } : t));
-      return { ...prev, [cat]: updated };
-    });
-  }, []);
-  useLayoutEffect(() => {
-    setCollapsed((prev) => {
-      let next = { ...prev };
-      const cats = Object.keys(tasks);
-      const lastDoneCat = [...cats].reverse().find((cat) => tasks[cat]?.every((t) => t.done));
-      if (lastDoneCat) {
-        next[lastDoneCat] = true;
-        const idx = cats.indexOf(lastDoneCat);
-        for (let i = idx + 1; i < cats.length; i++) {
-          if (tasks[cats[i]]?.some((t) => !t.done)) {
-            next[cats[i]] = false;
-            break;
-          }
-        }
-      }
-      return next;
-    });
-  }, [tasks]);
-  const resetAll = useCallback(() => {
-    setTasks((prev) => {
-      const cleared = {};
-      Object.keys(prev).forEach((cat) => {
-        cleared[cat] = prev[cat].map((t) => ({ ...t, done: false }));
-      });
-      return cleared;
-    });
-  }, []);
+}, []);
+
   const hardReset = useCallback(() => {
     ["preset", "notes", "checklist", "collapsed", "contentFilters", "version", "dark"].forEach((key) => localStorage.removeItem(key));
     localStorage.setItem("version", DATA_VERSION);
@@ -448,13 +409,13 @@ export default function App() {
     categoryTitle: { cursor: "pointer", marginBottom: 12, fontSize: 15, fontWeight: 600, color: category, display: "flex", alignItems: "center", gap: 16 },
     card: { display: "flex", alignItems: "flex-start", gap: 10, padding: "16px 18px", border: `1px solid ${border}`, background: card, textAlign: "left", borderRadius: 18, transition: "all 0.15s ease", boxShadow: dark ? "0 1px 2px rgba(0,0,0,0.3)" : "0 1px 2px rgba(0,0,0,0.05)" },
     taskText: { flex: 1, fontSize: 13, lineHeight: "18px", color: textColor, textDecoration: "none" },
-  };
-  return (
+  };  return (
     <div className={dark ? "dark" : ""} style={{ padding: 30, minHeight: "100vh", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial", background: bg, color: textColor }}>
       <style>{`
         body, html { margin: 0 !important; padding: 0 !important; }
       `}</style>
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+        {/* Шапка и контролы */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 24, marginBottom: 24 }}>
            <div style={{ flex: "1 1 320px", textAlign: "center" }}>
               <h1 style={{ margin: 0, padding: 0, fontSize: 28, fontWeight: 700, color: title, lineHeight: 1.2 }}>Чек-лист проверки</h1>
@@ -489,79 +450,115 @@ export default function App() {
             </div>
           </div>
         </div>
-        {Object.keys(tasks).map((cat) => (
-          <div key={cat} style={{ marginBottom: 20 }}>
-            <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
-              <span>{cat}</span>
-              <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
-                {tasks[cat].filter((t) => t.done).length}/{tasks[cat].length} {tasks[cat].every((t) => t.done) ? " ✓" : ""}
-              </span>
-            </div>
-            {!collapsed[cat] && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {tasks[cat].map((task, i) => {
-                  if ((cat === "Таблицы" && !contentFilters.tables) || (task.feature && !contentFilters[task.feature])) return null;
-                  return (
-                    <label key={`${cat}-${i}`} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
-                      <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
-                        style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
-                      <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
-                        {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
-                                            {task.links?.length > 0 && (
-                          <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
-                            {task.links.map((link) => (
-                              <a
-                                key={link.url}
-                                href={link.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{
-                                  padding: "4px 10px",
-                                  borderRadius: 999,
-                                  fontSize: 12,
-                                  fontWeight: 600,
-                                  textDecoration: "none",
-                                  background: dark ? "#27272a" : "#eef2f7",
-                                  color: dark ? "#93c5fd" : "#2563eb",
-                                  border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db"
-                                }}
-                              >
-                                {link.label}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </label>
-                  );
-                })}
+
+     
+   {/* --- AI АГЕНТ: Панель анализа --- */}
+<div style={{ marginBottom: 24, padding: 16, borderRadius: 16, background: dark ? "#1e293b" : "#f8fafc", border: `1px solid ${border}` }}>
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
+    <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: title }}>🤖 AI-анализ кода</h3>
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <button type="button" style={{...btn, opacity: aiCode ? 1 : 0.5}} onClick={() => analyzeCode(aiCode)} disabled={!aiCode}>
+        ▶ Проверить код
+      </button>
+      <button type="button" style={btn} onClick={() => { setAiFilterMode(false); setAiFeatures(null); }}>Сбросить фильтр</button>
+      <label style={{...btn, cursor: "pointer"}}>
+        📂 Загрузить файл
+        <input type="file" accept=".html,.css,.js,.txt" style={{ display: "none" }} onChange={handleFileChange} />
+      </label>
+    </div>
+  </div>
+  <textarea
+    value={aiCode}
+    onChange={(e) => setAiCode(e.target.value)}
+    placeholder="Вставьте сюда HTML/CSS/JS код или используйте кнопку 'Загрузить файл'..."
+    style={{ width: "100%", minHeight: 100, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#0f172a" : "#fff", color: textColor, fontSize: 13, fontFamily: "monospace", resize: "vertical" }}
+  />
+  {aiFeatures && aiFilterMode && (
+    <div style={{ marginTop: 10, fontSize: 12, color: "#10b981", fontWeight: 600 }}>
+      ✅ Режим активирован: показаны только релевантные пункты
+    </div>
+  )}
+</div>
+
+        {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
+          {Object.keys(tasks).map((cat) => {
+          const categoryTasks = tasks[cat] || [];
+          const visibleTasks = aiFilterMode && aiFeatures
+            ? categoryTasks.filter(task => {
+                // Если у задачи нет ID, показываем её всегда
+                if (!task.id) return true;
+                const matchingIds = Object.values(AI_FEATURE_TO_TASK_IDS).filter(arr => arr.includes(task.id)).flat();
+                const hasFeature = task.feature ? aiFeatures[`has_${task.feature.split('-')[0]}`] : false;
+                return matchingIds.length > 0 || hasFeature;
+              })
+            : categoryTasks;
+
+          if (aiFilterMode && visibleTasks.length === 0) return null;
+          return (
+            <div key={cat} style={{ marginBottom: 20 }}>
+              <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
+                <span>{cat}</span>
+                <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
+                  {visibleTasks.filter((t) => t.done).length}/{visibleTasks.length} {visibleTasks.every((t) => t.done) ? " ✓" : ""}
+                </span>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
-      <div style={{ position: "fixed", right: 24, bottom: 24, zIndex: 999 }}>
-        {notesOpen && (
-          <div style={{ width: 320, marginBottom: 12, padding: 16, borderRadius: 18, border: `1px solid ${border}`, background: card, boxShadow: dark ? "0 12px 40px rgba(0,0,0,0.45)" : "0 12px 30px rgba(0,0,0,0.12)" }}>
-            <div style={{ fontWeight: 700, marginBottom: 10, color: title, fontSize: 15 }}>Заметки</div>
-            <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
-              <button type="button" onClick={() => setNotes((prev) => prev.trim() ? prev : NOTES_TEMPLATE)}
-                style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#27272a" : "#eef2f7", color: textColor, fontSize: 12, cursor: "pointer" }}>Вставить шаблон</button>
-              <button type="button" onClick={() => setNotes("")}
-                style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#3a1f1f" : "#fee2e2", color: dark ? "#fca5a5" : "#991b1b", fontSize: 12, cursor: "pointer" }}>Очистить</button>
+
+              {!collapsed[cat] && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {categoryTasks.map((task, i) => {
+                    if ((cat === "Таблицы" && !contentFilters.tables) || (task.feature && !contentFilters[task.feature])) return null;
+                    if (aiFilterMode && aiFeatures && !visibleTasks.includes(task)) return null;
+
+                    return (
+                      <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
+                        <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
+                          style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
+                        <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
+                          {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
+                          {task.links?.length > 0 && (
+                            <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
+                              {task.links.map((link) => (
+                                <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
+                                   style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db" }}>
+                                  {link.label}
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Заметки по ходу проверки: вопросы, правки и всё, что не хочется потерять — можно записывать сюда, чтобы не держать в голове"
-              style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
-          </div>
-        )}
-        <button type="button" onClick={() => setNotesOpen((v) => !v)}
-          style={{ 
-            width: 58, height: 58, borderRadius: "50%", border: "2px solid #FFDD2D", 
-            background: bg, color: dark ? "#FFDD2D" : "#111827", 
-            boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)", 
-            fontSize: 22, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" 
-          }}>✏️</button>
+          );
+        })}
+
+        {/* --- Заметки (плавающая панель) --- */}
+        <div style={{ position: "fixed", right: 24, bottom: 24, zIndex: 999 }}>
+          {notesOpen && (
+            <div style={{ width: 320, marginBottom: 12, padding: 16, borderRadius: 18, border: `1px solid ${border}`, background: card, boxShadow: dark ? "0 12px 40px rgba(0,0,0,0.45)" : "0 12px 30px rgba(0,0,0,0.12)" }}>
+              <div style={{ fontWeight: 700, marginBottom: 10, color: title, fontSize: 15 }}>Заметки</div>
+              <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+                <button type="button" onClick={() => setNotes((prev) => prev.trim() ? prev : NOTES_TEMPLATE)}
+                  style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#27272a" : "#eef2f7", color: textColor, fontSize: 12, cursor: "pointer" }}>Вставить шаблон</button>
+                <button type="button" onClick={() => setNotes("")}
+                  style={{ padding: "6px 10px", borderRadius: 10, border: "none", background: dark ? "#3a1f1f" : "#fee2e2", color: dark ? "#fca5a5" : "#991b1b", fontSize: 12, cursor: "pointer" }}>Очистить</button>
+              </div>
+              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Заметки по ходу проверки: вопросы, правки и всё, что не хочется потерять — можно записывать сюда, чтобы не держать в голове"
+                style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
+            </div>
+          )}
+          <button type="button" onClick={() => setNotesOpen((v) => !v)}
+            style={{ 
+              width: 58, height: 58, borderRadius: "50%", border: "2px solid #FFDD2D", 
+              background: bg, color: dark ? "#FFDD2D" : "#111827", 
+              boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)", 
+              fontSize: 22, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" 
+            }}>✏️</button>
+        </div>
       </div>
     </div>
   );
