@@ -3,9 +3,9 @@ import { useEffect, useState, useMemo, useCallback, useLayoutEffect } from "reac
 const DATA_VERSION = "1.1";
 
 const NOTES_TEMPLATE =
-`Вопросы к редакции:
+  `Вопросы к редакции:
 —
-Поставить блокер пи:
+Поставить блокер за:
 —
 Правки для фотореда/дизайнера:
 —`;
@@ -40,7 +40,7 @@ const PRESETS = {
       { _sortOrder: 3, text: "Тег noads" },
     ],
     "Текст": [
-      {  _sortOrder: 17, text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точка, кроме последней, отбиты <br/>" },
+      { _sortOrder: 17, text: "Список в шортах: первая строчка с большой, следующие с маленькой, в конце каждой строчки точка, кроме последней, отбиты <br/>" },
     ],
   },
   tests: {
@@ -49,9 +49,9 @@ const PRESETS = {
       { _sortOrder: 6, text: "Внутри конфига есть все необходимые склейки" },
     ],
     "Админка": [
-      {  _sortOrder: 3, text: "Проверить автора обложки или источники" },
-      {  _sortOrder: 2, text: "Тег *noadscalctest*" },
-      {  _sortOrder: 3, text: "В больших тестах под обложкой указан иллюстратор" },
+      { _sortOrder: 3, text: "Проверить автора обложки или источники" },
+      { _sortOrder: 2, text: "Тег *noadscalctest*" },
+      { _sortOrder: 3, text: "В больших тестах под обложкой указан иллюстратор" },
     ],
     "Прочее": [
       { text: "В кайтене прикреплены ссылки на админку и конфиг" },
@@ -61,7 +61,7 @@ const PRESETS = {
   compare: { "Админка": [{ _sortOrder: 3, text: "Тег noads" }] },
   spending: {
     "Текст": [
-      {  _sortOrder: 1, text: "В начале статьи стоит плашка panel с абзацами *p grade=\"secondary\"*" },
+      { _sortOrder: 1, text: "В начале статьи стоит плашка panel с абзацами *p grade=\"secondary\"*" },
       { _sortOrder: 1, text: "У авторов стоят анонимные аватарки anonym_male у мужчин и anonym_female у женщин, автор стоит после оглавления" },
       { _sortOrder: 7, text: "Траты обозначены *class=\"negative\"*" },
       { _sortOrder: 7, text: "Доходы обозначены *class=\"positive\"*" },
@@ -69,7 +69,7 @@ const PRESETS = {
     ],
     "Админка": [
       { _sortOrder: 4, text: "Нажата кнопка из сообщества" },
-      { _sortOrder: 5,  text: "Подпись к обложке: Фотография — Ксения Михайлова" },
+      { _sortOrder: 5, text: "Подпись к обложке: Фотография — Ксения Михайлова" },
     ],
   },
   cd: {
@@ -79,12 +79,12 @@ const PRESETS = {
       { _sortOrder: 5, text: "Обложка с эмодзи с типом мейна «мини над заголовком»" },
       { _sortOrder: 4, text: "Редакция Что делать + тематическая" },
       { _sortOrder: 2, text: "Нажаты кнопки из сообщества и выбор редакции" },
-      {  _sortOrder: 6, text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог⁠-⁠описания" },
-      {  _sortOrder: 6, text: "В реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если его нет, то добавляем. В выдуманных проставляем тег вместе с другими. Если в статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще один технический тег: *feature⁠-⁠out.* Для опросов этот тег не нужен" },
+      { _sortOrder: 6, text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог⁠-⁠описания" },
+      { _sortOrder: 6, text: "В реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если его нет, то добавляем. В выдуманных проставляем тег вместе с другими. Если в статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще один технический тег: *feature⁠-⁠out.* Для опросов этот тег не нужен" },
       { _sortOrder: 0, text: "В подборке ЧД основной заг начинается с о слов «Что делать, если:..»" },
       { _sortOrder: 0, text: "В подборке ЧД url статьи всегда начинается с префикса «ask⁠-»" },
-      {  _sortOrder: 5, text: "В классических ЧД цвет фона для обложек #2c2c2c" },
-      {  _sortOrder: 5, text: "В подборке ЧД на обложке ОГ по три эмодзи" },
+      { _sortOrder: 5, text: "В классических ЧД цвет фона для обложек #2c2c2c" },
+      { _sortOrder: 5, text: "В подборке ЧД на обложке ОГ по три эмодзи" },
     ],
     "Текст": [
       { _sortOrder: 0, text: "В классических ЧД нет лида" },
@@ -113,7 +113,7 @@ const PRESETS = {
       { _sortOrder: 2, text: "Проставлен *тег noadsshort*" },
       { _sortOrder: 2, text: "Среди потоков добавлены «Шорты», но не основным потоком" },
       { _sortOrder: 2, text: "Нажата кнопка из сообщества и выбор редакции если вторая редакция UGC" },
-      { _sortOrder: 3,text: "Обложка внутри статьи отсутствует" },
+      { _sortOrder: 3, text: "Обложка внутри статьи отсутствует" },
       { _sortOrder: 3, text: "Источник фото в подвале" },
     ],
     "Текст": [
@@ -162,7 +162,7 @@ const DATA = {
     { id: "cover-type", text: "Проверить тип обложки, кредит к обложке в нужном месте (под обложкой/в подвале), наличие бирки на ОГ, текст на ОГ оттипирован (проставлены склейки)" },
     { id: "credit", text: "Проверить автора обложки или источники" },
     { links: [{ label: "Иноагенты и прочие враги в подвале", url: "https://tinkoffjournal.kaiten.ru/documents/d/05e4af49-d4af-433d-a183-528ac0d4da1a" }] },
-    {_sortOrder: 9999, text: "Мягкий перенос в заге", links: [{ label: "Символы", url: "https://symbl.cc/ru/00AD/" }, { label: "Правила", url: "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe" }] },
+    { _sortOrder: 9999, text: "Мягкий перенос в заге", links: [{ label: "Символы", url: "https://symbl.cc/ru/00AD/" }, { label: "Правила", url: "https://www.batov.ru/hyph/cgi-bin/hyphtestex.exe" }] },
   ],
   "Текст": [
     { text: "Подпись автора с маленькой буквы" },
@@ -280,9 +280,11 @@ const renderTextWithLinks = (text, dark) => {
       const [, label, url] = match;
       return (
         <a key={i} href={url} target="_blank" rel="noreferrer"
-           style={{ display: "inline-flex", alignItems: "center", padding: "2px 8px", marginLeft: 6,
-             borderRadius: 8, background: dark ? "#33334b" : "#e8e8ea", color: dark ? "#7ab7ff" : "#2563eb",
-             textDecoration: "none", fontSize: 13, fontWeight: 500 }}
+          style={{
+            display: "inline-flex", alignItems: "center", padding: "2px 8px", marginLeft: 6,
+            borderRadius: 8, background: dark ? "#33334b" : "#e8e8ea", color: dark ? "#7ab7ff" : "#2563eb",
+            textDecoration: "none", fontSize: 13, fontWeight: 500
+          }}
         >{label}</a>
       );
     }
@@ -445,10 +447,10 @@ export default function App() {
       <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         {/* Шапка и контролы */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 24, marginBottom: 24 }}>
-           <div style={{ flex: "1 1 320px", textAlign: "center" }}>
-              <h1 style={{ margin: 0, padding: 0, fontSize: 28, fontWeight: 700, color: title, lineHeight: 1.2 }}>Чек-лист проверки</h1>
-              <div style={{ marginTop: 8, fontSize: 13, color: mutedColor, lineHeight: 1.5 }}>{doneTasks}/{totalTasks} ({percent}%)</div>
-            </div>
+          <div style={{ flex: "1 1 320px", textAlign: "center" }}>
+            <h1 style={{ margin: 0, padding: 0, fontSize: 28, fontWeight: 700, color: title, lineHeight: 1.2 }}>Чек-лист проверки</h1>
+            <div style={{ marginTop: 8, fontSize: 13, color: mutedColor, lineHeight: 1.5 }}>{doneTasks}/{totalTasks} ({percent}%)</div>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12, marginLeft: "auto", flex: "0 1 520px" }}>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-end", width: "100%" }}>
               <button type="button" style={btn} onClick={() => setDark((v) => !v)}>
@@ -478,105 +480,133 @@ export default function App() {
             </div>
           </div>
         </div>
-            {/* --- AI АГЕНТ: Панель анализа --- */}
-  {/* --- AI АГЕНТ: Панель анализа --- */}
-<div style={{ marginBottom: 24, padding: 16, borderRadius: 16, background: dark ? "#1e293b" : "#f8fafc", border: `1px solid ${border}` }}>
-  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
-    <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: title }}>🤖 AI-анализ кода</h3>
-    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-      <button type="button" style={{...btn, opacity: aiCode ? 1 : 0.5}} onClick={() => analyzeCode(aiCode)} disabled={!aiCode}>
-        ▶ Проверить код
-      </button>
-      <button type="button" style={btn} onClick={() => { setAiFilterMode(false); setAiFeatures(null); }}>Сбросить фильтр</button>
-    </div>
-  </div>
-  <textarea
-    id="ai-code-input"
-    name="ai-code-input"
-    value={aiCode}
-    onChange={(e) => setAiCode(e.target.value)}
-    placeholder="Вставьте сюда HTML/CSS/JS код..."
-    aria-label="Поле ввода кода для AI-анализа"
-    style={{ width: "100%", minHeight: 100, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#0f172a" : "#fff", color: textColor, fontSize: 13, fontFamily: "monospace", resize: "vertical" }}
-  />
-  {aiFeatures && aiFilterMode && (
-    <div style={{ marginTop: 10, fontSize: 12, color: "#10b981", fontWeight: 600 }}>
-      ✅ Режим активирован: показаны только релевантные пункты
-    </div>
-  )}
-</div>
-                {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
-{Object.keys(tasks).map((cat) => {
-  const categoryTasks = tasks[cat] || [];
-  
-  // 1. Точное вычисление разрешённых ID (O(1) поиск)
-  const allowedIds = new Set();
-  if (aiFilterMode && aiFeatures) {
-    Object.entries(AI_FEATURE_TO_TASK_IDS).forEach(([feature, ids]) => {
-      if (aiFeatures[`has_${feature}`]) ids.forEach(id => allowedIds.add(id));
-    });
-  }
-
-  // 2. Скрытие пустых категорий при активном фильтре
-  if (aiFilterMode && aiFeatures && allowedIds.size > 0) {
-    const hasAnyVisible = categoryTasks.some(task => {
-      if (!task.id && !task.feature) return true;
-      if (task.id && allowedIds.has(task.id)) return true;
-      if (task.feature) {
-        const aiKey = task.feature.startsWith('has_') ? task.feature : `has_${task.feature}`;
-        if (aiFeatures[aiKey]) return true;
-      }
-      return false;
-    });
-    if (!hasAnyVisible) return null;
-  }
-
-  return (
-    <div key={cat} style={{ marginBottom: 20 }}>
-      <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
-        <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
-        <span>{cat}</span>
-        <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
-          {categoryTasks.filter((t) => t.done).length}/{categoryTasks.length} {categoryTasks.every((t) => t.done) ? " ✓" : ""}
-        </span>
-      </div>
-      {!collapsed[cat] && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {categoryTasks.map((task, i) => {
-            if ((cat === "Таблицы" && !contentFilters.tables) || (task.feature && !contentFilters[task.feature])) return null;
-            
-            // Точечная проверка релевантности
-            if (aiFilterMode && aiFeatures) {
-              const isIdMatch = task.id ? allowedIds.has(task.id) : false;
-              const isFeatureMatch = task.feature ? !!aiFeatures[task.feature.startsWith('has_') ? task.feature : `has_${task.feature}`] : false;
-              if (!isIdMatch && !isFeatureMatch) return null;
-            }
-
-            return (
-              <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
-                <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
-                  style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
-                <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
-                  {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
-                  {task.links?.length > 0 && (
-                    <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
-                      {task.links.map((link) => (
-                        <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
-                           style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db" }}>
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </label>
-            );
-          })}
+        {/* --- AI АГЕНТ: Панель анализа --- */}
+        {/* --- AI АГЕНТ: Панель анализа --- */}
+        <div style={{ marginBottom: 24, padding: 16, borderRadius: 16, background: dark ? "#1e293b" : "#f8fafc", border: `1px solid ${border}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
+            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: title }}>🤖 AI-анализ кода</h3>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button type="button" style={{ ...btn, opacity: aiCode ? 1 : 0.5 }} onClick={() => analyzeCode(aiCode)} disabled={!aiCode}>
+                ▶ Проверить код
+              </button>
+              <button type="button" style={btn} onClick={() => { setAiFilterMode(false); setAiFeatures(null); }}>Сбросить фильтр</button>
+            </div>
+          </div>
+          <textarea
+            id="ai-code-input"
+            name="ai-code-input"
+            value={aiCode}
+            onChange={(e) => setAiCode(e.target.value)}
+            placeholder="Вставьте сюда HTML/CSS/JS код..."
+            aria-label="Поле ввода кода для AI-анализа"
+            style={{ width: "100%", minHeight: 100, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#0f172a" : "#fff", color: textColor, fontSize: 13, fontFamily: "monospace", resize: "vertical" }}
+          />
+          {aiFeatures && aiFilterMode && (
+            <div style={{ marginTop: 10, fontSize: 12, color: "#10b981", fontWeight: 600 }}>
+              ✅ Режим активирован: показаны только релевантные пункты
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
-})}
+        {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
+        {(() => {
+          // 🎯 Границы влияния AI-фильтра: только содержательные разделы
+          const AI_ALLOWED_CATEGORIES = ["Текст", "Таблицы", "Картинки"];
+          const isAiCategory = aiFilterMode && aiFeatures && AI_ALLOWED_CATEGORIES.includes(cat);
+
+          // 🔍 1. Формируем списки разрешённых ID и Feature для текущего анализа кода
+          const allowedIds = new Set();
+          const allowedFeatures = new Set();
+          if (aiFilterMode && aiFeatures) {
+            Object.entries(AI_FEATURE_TO_TASK_IDS).forEach(([aiKey, ids]) => {
+              if (aiFeatures[aiKey]) ids.forEach(id => allowedIds.add(id));
+            });
+            // AI detect media -> показываем все media-задачи
+            if (aiFeatures.has_images) {
+              allowedFeatures.add("images");
+              allowedFeatures.add("screenshots");
+              allowedFeatures.add("infographic");
+            }
+          }
+
+          // ✅ 2. Проверяем, есть ли хоть один элемент для показа в этой категории
+          const hasVisible = categoryTasks.some(task => {
+            const baseVisible = (cat !== "Таблицы" || contentFilters.tables) &&
+              (!task.feature || contentFilters[task.feature]);
+            if (!baseVisible) return false;
+
+            if (isAiCategory) {
+              if (cat === "Таблицы") return aiFeatures.has_tables;
+              if (task.feature) return allowedFeatures.has(task.feature);
+              if (task.id) return allowedIds.has(task.id);
+            }
+            return true; // Задачи без id/feature (базовая проверка текста) всегда видны
+          });
+          if (!hasVisible) return null;
+
+          // 📊 3. Точный подсчёт для шапки категории
+          const visibleCount = categoryTasks.filter(task => {
+            const base = (cat !== "Таблицы" || contentFilters.tables) && (!task.feature || contentFilters[task.feature]);
+            if (!base) return false;
+            if (isAiCategory) {
+              if (cat === "Таблицы") return aiFeatures.has_tables;
+              if (task.feature) return allowedFeatures.has(task.feature);
+              if (task.id) return allowedIds.has(task.id);
+            }
+            return true;
+          }).length;
+
+          return (
+            <div key={cat} style={{ marginBottom: 20 }}>
+              <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
+                <span>{cat}</span>
+                <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
+                  {visibleCount}/{categoryTasks.length} {visibleCount === categoryTasks.length ? " ✓" : ""}
+                </span>
+              </div>
+              {!collapsed[cat] && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {categoryTasks.map((task, i) => {
+                    // 🛡️ Базовый фильтр (ручные переключатели Контент)
+                    const baseVisible = (cat !== "Таблицы" || contentFilters.tables) &&
+                      (!task.feature || contentFilters[task.feature]);
+
+                    // 🤖 Точечный AI-фильтр (только для разрешённых категорий)
+                    let aiVisible = true;
+                    if (isAiCategory) {
+                      if (cat === "Таблицы") aiVisible = aiFeatures.has_tables;
+                      else if (task.feature) aiVisible = allowedFeatures.has(task.feature);
+                      else if (task.id) aiVisible = allowedIds.has(task.id);
+                      // Остальные текстовые чекбоксы (без id/feature) всегда показываем
+                    }
+
+                    if (!baseVisible || !aiVisible) return null;
+
+                    return (
+                      <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
+                        <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
+                          style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
+                        <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
+                          {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
+                          {task.links?.length > 0 && (
+                            <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
+                              {task.links.map((link) => (
+                                <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
+                                  style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db" }}>
+                                  {link.label}
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })()}
         {/* --- Заметки (плавающая панель) --- */}
         <div style={{ position: "fixed", right: 24, bottom: 24, zIndex: 999 }}>
           {notesOpen && (
@@ -592,12 +622,13 @@ export default function App() {
                 style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
             </div>
           )}
+
           <button type="button" onClick={() => setNotesOpen((v) => !v)}
-            style={{ 
-              width: 58, height: 58, borderRadius: "50%", border: "2px solid #FFDD2D", 
-              background: bg, color: dark ? "#FFDD2D" : "#111827", 
-              boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)", 
-              fontSize: 22, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" 
+            style={{
+              width: 58, height: 58, borderRadius: "50%", border: "2px solid #FFDD2D",
+              background: bg, color: dark ? "#FFDD2D" : "#111827",
+              boxShadow: dark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)",
+              fontSize: 22, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center"
             }}>✏️</button>
         </div>
       </div>
