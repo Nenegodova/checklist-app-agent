@@ -581,8 +581,21 @@ export default function App() {
               style={{ width: "100%", height: 180, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#111" : "#fff", color: textColor, fontSize: 14, lineHeight: "20px", resize: "none", outline: "none", boxSizing: "border-box" }} />
           </div>
         )}
-        <button type="button" onClick={() => setNotesOpen((v) => !v)}
-          style={{ width: 58, height: 58, borderRadius: "50%", border: "none", background: "#FFDD2D", color: "#111", boxShadow: "0 12px 32px rgba(255,221,45,.35)", fontSize: 22, cursor: "pointer" }}>✏️</button>
+      <button type="button" onClick={() => setNotesOpen((v) => !v)}
+  style={{ 
+    width: 58, 
+    height: 58, 
+    borderRadius: "50%", 
+    border: "2px solid #FFDD2D", 
+    background: "#111", 
+    color: "#FFDD2D", 
+    boxShadow: "0 6px 16px rgba(0,0,0,0.25)", 
+    fontSize: 22, 
+    cursor: "pointer",
+    display: "inline-flex", 
+    alignItems: "center", 
+    justifyContent: "center"
+  }}>✍️</button>
       </div>
     </div>
   );
