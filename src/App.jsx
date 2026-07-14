@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo, useCallback, useLayoutEffect } from "react";
+
 const DATA_VERSION = "1.1";
+
 const NOTES_TEMPLATE =
 `Вопросы к редакции:
 —
@@ -7,6 +9,7 @@ const NOTES_TEMPLATE =
 —
 Правки для фотореда/дизайнера:
 —`;
+
 const CONTENT_FILTERS = {
   tables: { label: "Таблицы", default: true },
   screenshots: { label: "Скрины", default: true },
@@ -14,6 +17,7 @@ const CONTENT_FILTERS = {
   poll: { label: "Опрос", default: true },
   infographic: { label: "Инфографика", default: true },
 };
+
 const buildContentFilters = () => {
   const result = {};
   Object.entries(CONTENT_FILTERS).forEach(([key, value]) => {
@@ -21,6 +25,7 @@ const buildContentFilters = () => {
   });
   return result;
 };
+
 const PRESETS = {
   default: {},
   invest: {
@@ -71,11 +76,11 @@ const PRESETS = {
     "Админка": [
       { _sortOrder: 0, text: "В классических ЧД нет подзага" },
       { _sortOrder: 0, text: "В подборке ЧД есть подзаг" },
-      { _sortOrder: 5, text: "Обложка с эмодзи с типом мейна «мини над заголовком»" },
+      { _sortOrder: 5, text: "Обложка с эмодзи с типом мейна «мини над заголовком»" },
       { _sortOrder: 4, text: "Редакция Что делать + тематическая" },
-      { _sortOrder: 2, text: "Нажаты кнопки из сообщества и выбор редакции" },
-      {  _sortOrder: 6, text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог⁠-⁠описания" },
-      {  _sortOrder: 6, text: "В реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если его нет, то добавляем. В выдуманных проставляем тег вместе с другими. Если в статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще один технический тег: *feature⁠-⁠out.* Для опросов этот тег не нужен" },
+      { _sortOrder: 2, text: "Нажаты кнопки из сообщества и выбор редакции" },
+      {  _sortOrder: 6, text: "Обязательно указываем краткое описание. В это поле дублируем текст из ог⁠-⁠описания" },
+      {  _sortOrder: 6, text: "В реальных вопросах проверяем наличие технического *тега noadswhattodo* (скрывает некоторые рекламные баннеры). Если его нет, то добавляем. В выдуманных проставляем тег вместе с другими. Если в статье присутствуют фичеры (калькуляторы, тесты), то добавляем еще один технический тег: *feature⁠-⁠out.* Для опросов этот тег не нужен" },
       { _sortOrder: 0, text: "В подборке ЧД основной заг начинается с о слов «Что делать, если:..»" },
       { _sortOrder: 0, text: "В подборке ЧД url статьи всегда начинается с префикса «ask⁠-»" },
       {  _sortOrder: 5, text: "В классических ЧД цвет фона для обложек #2c2c2c" },
@@ -140,10 +145,12 @@ const PRESETS = {
     ],
   },
 };
+
 const PRESET_EXCLUDES = {
   cd: { "Текст": ["lead", "heading-levels", "editor-badge"], "Админка": ["cover-author", "cover-type", "utm", "credit"] },
   shorts: { "Текст": ["tooltip-link", "currency-tooltip", "lists-style", "utm"] },
 };
+
 const DATA = {
   "Админка": [
     { text: "Проверить, что коллеги закрыли вкладку с визивигом" },
@@ -211,6 +218,7 @@ const DATA = {
     { links: [{ label: "Методички общие", url: "https://tinkoffjournal.kaiten.ru/documents/g/1a81bca6-923a-460c-8081-864ecb12e994" }] },
   ],
 };
+
 // --- Helpers ---
 const readStorageJSON = (key) => {
   try {
@@ -222,6 +230,7 @@ const readStorageJSON = (key) => {
     return null;
   }
 };
+
 const buildCollapsed = (data, prev = {}) => {
   const next = {};
   Object.keys(data).forEach((cat) => {
@@ -229,6 +238,7 @@ const buildCollapsed = (data, prev = {}) => {
   });
   return next;
 };
+
 const buildTasks = (data) => {
   const initial = {};
   Object.keys(data).forEach((cat) => {
@@ -242,6 +252,7 @@ const buildTasks = (data) => {
   });
   return initial;
 };
+
 function useMediaQuery(query) {
   const getMatches = () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false);
   const [matches, setMatches] = useState(getMatches);
@@ -254,6 +265,7 @@ function useMediaQuery(query) {
   }, [query]);
   return matches;
 }
+
 // ИСПРАВЛЕНО: функция вынесена наружу, ключи генерируются через индекс map (стабильно)
 const renderTextWithLinks = (text, dark) => {
   if (!text) return null;
@@ -277,6 +289,7 @@ const renderTextWithLinks = (text, dark) => {
     return <span key={i}>{part}</span>;
   });
 };
+
 // --- Component ---
 export default function App() {
   const [dark, setDark] = useState(() => {
@@ -288,6 +301,7 @@ export default function App() {
       return false;
     }
   });
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -299,75 +313,91 @@ export default function App() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
   const [preset, setPreset] = useState(() => localStorage.getItem("preset") || "default");
   const [contentFilters, setContentFilters] = useState(() => readStorageJSON("contentFilters") || buildContentFilters());
   const [focusMode, setFocusMode] = useState(false);
 
-// --- AI АГЕНТ: Состояния ---
-const [aiCode, setAiCode] = useState("");
-const [aiFeatures, setAiFeatures] = useState(null);
-const [aiFilterMode, setAiFilterMode] = useState(false);
+  // --- ДОБАВЛЕНО: недостающие состояния и функция toggle ---
+  const [tasks, setTasks] = useState(() => buildTasks(DATA));
+  const [collapsed, setCollapsed] = useState(() => buildCollapsed(DATA));
+  const [notes, setNotes] = useState("");
+  const [notesOpen, setNotesOpen] = useState(false);
+  const toggle = useCallback((cat, i) => {
+    setTasks((prev) => ({
+      ...prev,
+      [cat]: prev[cat].map((t, idx) =>
+        idx === i ? { ...t, done: !t.done } : t
+      ),
+    }));
+  }, []);
+  // --- КОНЕЦ ДОБАВЛЕНИЯ ---
+
+  // --- AI АГЕНТ: Состояния ---
+  const [aiCode, setAiCode] = useState("");
+  const [aiFeatures, setAiFeatures] = useState(null);
+  const [aiFilterMode, setAiFilterMode] = useState(false);
 
   // ИСПРАВЛЕНО: маппинг привязан к РЕАЛЬНЫМ id из вашего DATA
-const AI_FEATURE_TO_TASK_IDS = {
-  has_forms: ["lists-style", "editor-badge", "utm"],
-  has_media: ["credit", "cover-type"],
-  has_flex_grid: ["lists-style"],
-  has_images: ["credit", "cover-type"],
-  has_tables: ["lists-style"],
-  has_meta: ["heading-levels", "lead"],
-  has_labels: ["lists-style", "editor-badge"],
-  has_js_interactive: ["tooltip-link", "currency-tooltip"],
-  has_responsive_img: ["cover-type"],
-  has_semantic: ["heading-levels", "lead"],
-};
+  const AI_FEATURE_TO_TASK_IDS = {
+    has_forms: ["lists-style", "editor-badge", "utm"],
+    has_media: ["credit", "cover-type"],
+    has_flex_grid: ["lists-style"],
+    has_images: ["credit", "cover-type"],
+    has_tables: ["lists-style"],
+    has_meta: ["heading-levels", "lead"],
+    has_labels: ["lists-style", "editor-badge"],
+    has_js_interactive: ["tooltip-link", "currency-tooltip"],
+    has_responsive_img: ["cover-type"],
+    has_semantic: ["heading-levels", "lead"],
+  };
 
   // ИСПРАВЛЕНО: убран alert, добавлена обработка ошибок
-const analyzeCode = useCallback((code) => {
-  if (!code.trim()) return;
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(code, 'text/html');
-    const features = {
-      has_forms: doc.querySelectorAll('input,select,textarea').length > 0,
-      has_media: /@media/.test(code),
-      has_flex_grid: /display:\s*(flex|grid|inline-flex|inline-grid)/.test(code),
-      has_images: doc.querySelectorAll('img,picture,video').length > 0,
-      has_tables: doc.querySelectorAll('table').length > 0,
-      has_meta: doc.querySelector('meta[name="description"]') !== null,
-      has_labels: Array.from(doc.querySelectorAll('input,select,textarea')).every(el => {
-        const parent = el.closest('label');
-        const byFor = parent ? el.id && doc.querySelector(`label[for="${el.id}"]`) : false;
-        return parent || byFor;
-      }),
-      has_js_interactive: /addEventListener|fetch\s*\(|axios|\.on\s*=\s*|\.then\(|\.click/.test(code),
-      has_responsive_img: /srcset|sizes|picture/.test(code),
-      has_semantic: /<article|<section|<nav|<header|<footer|<main/.test(code),
-    };
-    setAiFeatures(features);
-    setAiFilterMode(true);
-  } catch (err) {
-    console.error("Ошибка парсинга кода:", err);
-  }
-}, []);
+  const analyzeCode = useCallback((code) => {
+    if (!code.trim()) return;
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(code, 'text/html');
+      const features = {
+        has_forms: doc.querySelectorAll('input,select,textarea').length > 0,
+        has_media: /@media/.test(code),
+        has_flex_grid: /display:\s*(flex|grid|inline-flex|inline-grid)/.test(code),
+        has_images: doc.querySelectorAll('img,picture,video').length > 0,
+        has_tables: doc.querySelectorAll('table').length > 0,
+        has_meta: doc.querySelector('meta[name="description"]') !== null,
+        has_labels: Array.from(doc.querySelectorAll('input,select,textarea')).every(el => {
+          const parent = el.closest('label');
+          const byFor = parent ? el.id && doc.querySelector(`label[for="${el.id}"]`) : false;
+          return parent || byFor;
+        }),
+        has_js_interactive: /addEventListener|fetch\s*\(|axios|\.on\s*=\s*|\.then\(|\.click/.test(code),
+        has_responsive_img: /srcset|sizes|picture/.test(code),
+        has_semantic: /<article|<section|<nav|<header|<footer|<main/.test(code),
+      };
+      setAiFeatures(features);
+      setAiFilterMode(true);
+    } catch (err) {
+      console.error("Ошибка парсинга кода:", err);
+    }
+  }, []);
 
-const handleFileChange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => setAiCode(ev.target.result);
-  reader.readAsText(file);
-};
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setAiCode(ev.target.result);
+    reader.readAsText(file);
+  };
 
-const resetAll = useCallback(() => {
-  setTasks((prev) => {
-    const cleared = {};
-    Object.keys(prev).forEach((cat) => {
-      cleared[cat] = prev[cat].map((t) => ({ ...t, done: false }));
+  const resetAll = useCallback(() => {
+    setTasks((prev) => {
+      const cleared = {};
+      Object.keys(prev).forEach((cat) => {
+        cleared[cat] = prev[cat].map((t) => ({ ...t, done: false }));
+      });
+      return cleared;
     });
-    return cleared;
-  });
-}, []);
+  }, []);
 
   const hardReset = useCallback(() => {
     ["preset", "notes", "checklist", "collapsed", "contentFilters", "version", "dark"].forEach((key) => localStorage.removeItem(key));
@@ -380,9 +410,11 @@ const resetAll = useCallback(() => {
     setTasks(buildTasks(DATA));
     setCollapsed(buildCollapsed(DATA));
   }, []);
+
   const toggleCollapse = useCallback((cat) => {
     setCollapsed((prev) => ({ ...prev, [cat]: !prev[cat] }));
   }, []);
+
   const allTasks = Object.values(tasks ?? {}).flat();
   const doneTasks = allTasks.filter((t) => t.done).length;
   const totalTasks = allTasks.length;
@@ -409,7 +441,9 @@ const resetAll = useCallback(() => {
     categoryTitle: { cursor: "pointer", marginBottom: 12, fontSize: 15, fontWeight: 600, color: category, display: "flex", alignItems: "center", gap: 16 },
     card: { display: "flex", alignItems: "flex-start", gap: 10, padding: "16px 18px", border: `1px solid ${border}`, background: card, textAlign: "left", borderRadius: 18, transition: "all 0.15s ease", boxShadow: dark ? "0 1px 2px rgba(0,0,0,0.3)" : "0 1px 2px rgba(0,0,0,0.05)" },
     taskText: { flex: 1, fontSize: 13, lineHeight: "18px", color: textColor, textDecoration: "none" },
-  };  return (
+  };
+
+  return (
     <div className={dark ? "dark" : ""} style={{ padding: 30, minHeight: "100vh", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial", background: bg, color: textColor }}>
       <style>{`
         body, html { margin: 0 !important; padding: 0 !important; }
@@ -450,49 +484,47 @@ const resetAll = useCallback(() => {
             </div>
           </div>
         </div>
-
-     
-   {/* --- AI АГЕНТ: Панель анализа --- */}
-<div style={{ marginBottom: 24, padding: 16, borderRadius: 16, background: dark ? "#1e293b" : "#f8fafc", border: `1px solid ${border}` }}>
-  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
-    <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: title }}>🤖 AI-анализ кода</h3>
-    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-      <button type="button" style={{...btn, opacity: aiCode ? 1 : 0.5}} onClick={() => analyzeCode(aiCode)} disabled={!aiCode}>
-        ▶ Проверить код
-      </button>
-      <button type="button" style={btn} onClick={() => { setAiFilterMode(false); setAiFeatures(null); }}>Сбросить фильтр</button>
-      <label style={{...btn, cursor: "pointer"}}>
-        📂 Загрузить файл
-        <input type="file" accept=".html,.css,.js,.txt" style={{ display: "none" }} onChange={handleFileChange} />
-      </label>
-    </div>
-  </div>
-  <textarea
-    value={aiCode}
-    onChange={(e) => setAiCode(e.target.value)}
-    placeholder="Вставьте сюда HTML/CSS/JS код или используйте кнопку 'Загрузить файл'..."
-    style={{ width: "100%", minHeight: 100, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#0f172a" : "#fff", color: textColor, fontSize: 13, fontFamily: "monospace", resize: "vertical" }}
-  />
-  {aiFeatures && aiFilterMode && (
-    <div style={{ marginTop: 10, fontSize: 12, color: "#10b981", fontWeight: 600 }}>
-      ✅ Режим активирован: показаны только релевантные пункты
-    </div>
-  )}
-</div>
-
-        {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
+            {/* --- AI АГЕНТ: Панель анализа --- */}
+        <div style={{ marginBottom: 24, padding: 16, borderRadius: 16, background: dark ? "#1e293b" : "#f8fafc", border: `1px solid ${border}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
+            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: title }}>🤖 AI-анализ кода</h3>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button type="button" style={{...btn, opacity: aiCode ? 1 : 0.5}} onClick={() => analyzeCode(aiCode)} disabled={!aiCode}>
+                ▶ Проверить код
+              </button>
+              <button type="button" style={btn} onClick={() => { setAiFilterMode(false); setAiFeatures(null); }}>Сбросить фильтр</button>
+              <label style={{...btn, cursor: "pointer"}} htmlFor="ai-file-input">
+                📂 Загрузить файл
+                <input id="ai-file-input" name="ai-file" type="file" accept=".html,.css,.js,.txt" style={{ display: "none" }} onChange={handleFileChange} />
+              </label>
+            </div>
+          </div>
+          <textarea
+            id="ai-code-input"
+            name="ai-code-input"
+            value={aiCode}
+            onChange={(e) => setAiCode(e.target.value)}
+            placeholder="Вставьте сюда HTML/CSS/JS код или используйте кнопку 'Загрузить файл'..."
+            aria-label="Поле ввода кода для AI-анализа"
+            style={{ width: "100%", minHeight: 100, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#0f172a" : "#fff", color: textColor, fontSize: 13, fontFamily: "monospace", resize: "vertical" }}
+          />
+          {aiFeatures && aiFilterMode && (
+            <div style={{ marginTop: 10, fontSize: 12, color: "#10b981", fontWeight: 600 }}>
+              ✅ Режим активирован: показаны только релевантные пункты
+            </div>
+          )}
+        </div>
+                {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
           {Object.keys(tasks).map((cat) => {
           const categoryTasks = tasks[cat] || [];
           const visibleTasks = aiFilterMode && aiFeatures
             ? categoryTasks.filter(task => {
-                // Если у задачи нет ID, показываем её всегда
                 if (!task.id) return true;
                 const matchingIds = Object.values(AI_FEATURE_TO_TASK_IDS).filter(arr => arr.includes(task.id)).flat();
                 const hasFeature = task.feature ? aiFeatures[`has_${task.feature.split('-')[0]}`] : false;
                 return matchingIds.length > 0 || hasFeature;
               })
             : categoryTasks;
-
           if (aiFilterMode && visibleTasks.length === 0) return null;
           return (
             <div key={cat} style={{ marginBottom: 20 }}>
@@ -503,13 +535,11 @@ const resetAll = useCallback(() => {
                   {visibleTasks.filter((t) => t.done).length}/{visibleTasks.length} {visibleTasks.every((t) => t.done) ? " ✓" : ""}
                 </span>
               </div>
-
               {!collapsed[cat] && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {categoryTasks.map((task, i) => {
                     if ((cat === "Таблицы" && !contentFilters.tables) || (task.feature && !contentFilters[task.feature])) return null;
                     if (aiFilterMode && aiFeatures && !visibleTasks.includes(task)) return null;
-
                     return (
                       <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
                         <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
@@ -535,7 +565,6 @@ const resetAll = useCallback(() => {
             </div>
           );
         })}
-
         {/* --- Заметки (плавающая панель) --- */}
         <div style={{ position: "fixed", right: 24, bottom: 24, zIndex: 999 }}>
           {notesOpen && (
