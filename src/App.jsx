@@ -381,13 +381,7 @@ export default function App() {
     }
   }, []);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => setAiCode(ev.target.result);
-    reader.readAsText(file);
-  };
+
 
   const resetAll = useCallback(() => {
     setTasks((prev) => {
@@ -485,86 +479,104 @@ export default function App() {
           </div>
         </div>
             {/* --- AI АГЕНТ: Панель анализа --- */}
-        <div style={{ marginBottom: 24, padding: 16, borderRadius: 16, background: dark ? "#1e293b" : "#f8fafc", border: `1px solid ${border}` }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
-            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: title }}>🤖 AI-анализ кода</h3>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <button type="button" style={{...btn, opacity: aiCode ? 1 : 0.5}} onClick={() => analyzeCode(aiCode)} disabled={!aiCode}>
-                ▶ Проверить код
-              </button>
-              <button type="button" style={btn} onClick={() => { setAiFilterMode(false); setAiFeatures(null); }}>Сбросить фильтр</button>
-              <label style={{...btn, cursor: "pointer"}} htmlFor="ai-file-input">
-                📂 Загрузить файл
-                <input id="ai-file-input" name="ai-file" type="file" accept=".html,.css,.js,.txt" style={{ display: "none" }} onChange={handleFileChange} />
-              </label>
-            </div>
-          </div>
-          <textarea
-            id="ai-code-input"
-            name="ai-code-input"
-            value={aiCode}
-            onChange={(e) => setAiCode(e.target.value)}
-            placeholder="Вставьте сюда HTML/CSS/JS код или используйте кнопку 'Загрузить файл'..."
-            aria-label="Поле ввода кода для AI-анализа"
-            style={{ width: "100%", minHeight: 100, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#0f172a" : "#fff", color: textColor, fontSize: 13, fontFamily: "monospace", resize: "vertical" }}
-          />
-          {aiFeatures && aiFilterMode && (
-            <div style={{ marginTop: 10, fontSize: 12, color: "#10b981", fontWeight: 600 }}>
-              ✅ Режим активирован: показаны только релевантные пункты
-            </div>
-          )}
-        </div>
+  {/* --- AI АГЕНТ: Панель анализа --- */}
+<div style={{ marginBottom: 24, padding: 16, borderRadius: 16, background: dark ? "#1e293b" : "#f8fafc", border: `1px solid ${border}` }}>
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
+    <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: title }}>🤖 AI-анализ кода</h3>
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <button type="button" style={{...btn, opacity: aiCode ? 1 : 0.5}} onClick={() => analyzeCode(aiCode)} disabled={!aiCode}>
+        ▶ Проверить код
+      </button>
+      <button type="button" style={btn} onClick={() => { setAiFilterMode(false); setAiFeatures(null); }}>Сбросить фильтр</button>
+    </div>
+  </div>
+  <textarea
+    id="ai-code-input"
+    name="ai-code-input"
+    value={aiCode}
+    onChange={(e) => setAiCode(e.target.value)}
+    placeholder="Вставьте сюда HTML/CSS/JS код..."
+    aria-label="Поле ввода кода для AI-анализа"
+    style={{ width: "100%", minHeight: 100, padding: 12, borderRadius: 12, border: `1px solid ${border}`, background: dark ? "#0f172a" : "#fff", color: textColor, fontSize: 13, fontFamily: "monospace", resize: "vertical" }}
+  />
+  {aiFeatures && aiFilterMode && (
+    <div style={{ marginTop: 10, fontSize: 12, color: "#10b981", fontWeight: 600 }}>
+      ✅ Режим активирован: показаны только релевантные пункты
+    </div>
+  )}
+</div>
                 {/* --- AI АГЕНТ: Умная фильтрация списка --- */}
-          {Object.keys(tasks).map((cat) => {
-          const categoryTasks = tasks[cat] || [];
-          const visibleTasks = aiFilterMode && aiFeatures
-            ? categoryTasks.filter(task => {
-                if (!task.id) return true;
-                const matchingIds = Object.values(AI_FEATURE_TO_TASK_IDS).filter(arr => arr.includes(task.id)).flat();
-                const hasFeature = task.feature ? aiFeatures[`has_${task.feature.split('-')[0]}`] : false;
-                return matchingIds.length > 0 || hasFeature;
-              })
-            : categoryTasks;
-          if (aiFilterMode && visibleTasks.length === 0) return null;
-          return (
-            <div key={cat} style={{ marginBottom: 20 }}>
-              <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
-                <span>{cat}</span>
-                <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
-                  {visibleTasks.filter((t) => t.done).length}/{visibleTasks.length} {visibleTasks.every((t) => t.done) ? " ✓" : ""}
-                </span>
-              </div>
-              {!collapsed[cat] && (
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {categoryTasks.map((task, i) => {
-                    if ((cat === "Таблицы" && !contentFilters.tables) || (task.feature && !contentFilters[task.feature])) return null;
-                    if (aiFilterMode && aiFeatures && !visibleTasks.includes(task)) return null;
-                    return (
-                      <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
-                        <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
-                          style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
-                        <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
-                          {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
-                          {task.links?.length > 0 && (
-                            <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
-                              {task.links.map((link) => (
-                                <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
-                                   style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db" }}>
-                                  {link.label}
-                                </a>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </label>
-                    );
-                  })}
+{Object.keys(tasks).map((cat) => {
+  const categoryTasks = tasks[cat] || [];
+  
+  // 1. Точное вычисление разрешённых ID (O(1) поиск)
+  const allowedIds = new Set();
+  if (aiFilterMode && aiFeatures) {
+    Object.entries(AI_FEATURE_TO_TASK_IDS).forEach(([feature, ids]) => {
+      if (aiFeatures[`has_${feature}`]) ids.forEach(id => allowedIds.add(id));
+    });
+  }
+
+  // 2. Скрытие пустых категорий при активном фильтре
+  if (aiFilterMode && aiFeatures && allowedIds.size > 0) {
+    const hasAnyVisible = categoryTasks.some(task => {
+      if (!task.id && !task.feature) return true;
+      if (task.id && allowedIds.has(task.id)) return true;
+      if (task.feature) {
+        const aiKey = task.feature.startsWith('has_') ? task.feature : `has_${task.feature}`;
+        if (aiFeatures[aiKey]) return true;
+      }
+      return false;
+    });
+    if (!hasAnyVisible) return null;
+  }
+
+  return (
+    <div key={cat} style={{ marginBottom: 20 }}>
+      <div onClick={() => toggleCollapse(cat)} style={{ ...ui.categoryTitle, display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontSize: 16 }}>{collapsed[cat] ? "▶" : "▼"}</span>
+        <span>{cat}</span>
+        <span style={{ fontSize: 12, opacity: 0.9, padding: "2px 8px", borderRadius: 999, background: dark ? "#2a2a2e" : "#e5e7eb", minWidth: 42, textAlign: "center" }}>
+          {categoryTasks.filter((t) => t.done).length}/{categoryTasks.length} {categoryTasks.every((t) => t.done) ? " ✓" : ""}
+        </span>
+      </div>
+      {!collapsed[cat] && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {categoryTasks.map((task, i) => {
+            if ((cat === "Таблицы" && !contentFilters.tables) || (task.feature && !contentFilters[task.feature])) return null;
+            
+            // Точечная проверка релевантности
+            if (aiFilterMode && aiFeatures) {
+              const isIdMatch = task.id ? allowedIds.has(task.id) : false;
+              const isFeatureMatch = task.feature ? !!aiFeatures[task.feature.startsWith('has_') ? task.feature : `has_${task.feature}`] : false;
+              if (!isIdMatch && !isFeatureMatch) return null;
+            }
+
+            return (
+              <label key={task.id || task.text} className="task-card" style={{ ...ui.card, display: focusMode && task.done ? "none" : "flex" }}>
+                <input type="checkbox" checked={task.done} onChange={() => toggle(cat, i)} aria-label={task.text}
+                  style={{ width: 16, height: 16, marginTop: 2, accentColor: dark ? "#3f3f46" : "#6b7280", cursor: "pointer", flexShrink: 0 }} />
+                <div style={{ flex: 1, opacity: task.done ? 0.5 : 1 }}>
+                  {task.text && <div style={{ ...ui.taskText, textDecoration: task.done ? "line-through" : "none" }}>{renderTextWithLinks(task.text, dark)}</div>}
+                  {task.links?.length > 0 && (
+                    <div style={{ display: "flex", gap: 8, marginTop: task.text ? 8 : 0, flexWrap: "wrap" }}>
+                      {task.links.map((link) => (
+                        <a key={link.url} href={link.url} target="_blank" rel="noreferrer"
+                           style={{ padding: "4px 10px", borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: "none", background: dark ? "#27272a" : "#eef2f7", color: dark ? "#93c5fd" : "#2563eb", border: dark ? "1px solid #3f3f46" : "1px solid #d1d5db" }}>
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })}
+              </label>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+})}
         {/* --- Заметки (плавающая панель) --- */}
         <div style={{ position: "fixed", right: 24, bottom: 24, zIndex: 999 }}>
           {notesOpen && (
