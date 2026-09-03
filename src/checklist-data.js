@@ -746,64 +746,84 @@ const PRESET_EXCLUDES = {
     ],
   },
   ugc: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+    Выпуск: ["authoradd"],
   },
   ugc2: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc3: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc4: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc5: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc6: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc7: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc8: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc9: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc10: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc11: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc12: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc13: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc14: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc15: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc16: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc17: {
-    Текст: ["editor-badge", "authoradd", "lead"],
+    Текст: ["editor-badge",  "lead"],
+     Выпуск: ["authoradd"],
   },
   ugc18: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge"],
+     Выпуск: ["authoradd"],
   },
   ugc19: {
-    Текст: ["editor-badge", "authoradd"],
+    Текст: ["editor-badge",],
+     Выпуск: ["authoradd"],
   },
   ugc20: {
-    Текст: ["editor-badge", "authoradd", "lead"],
+    Текст: ["editor-badge", "lead"],
+     Выпуск: ["authoradd"],
   },
 };
 export const DATA = {
