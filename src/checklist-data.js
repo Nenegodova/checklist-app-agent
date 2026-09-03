@@ -273,11 +273,16 @@ const PRESETS = {
   },
   ugc: {
     Админка: [
-      {
-        text: "Наличие тега скрытия баннеров рекламы, если нужен",
-        label: "Методичка",
-        url: "https://docs.google.com/document/d/1CxDHgn_96EO2yc_PepRxZqdcKXnZcb9ulJ-hLiEmHi8/edit?tab=t.0",
-      },
+
+          {
+      text: "Наличие тега скрытия баннеров рекламы, если нужен",
+      links: [
+        {
+          label: "Методичка",
+          url: "https://docs.google.com/document/d/1CxDHgn_96EO2yc_PepRxZqdcKXnZcb9ulJ-hLiEmHi8/edit?tab=t.0",
+        },
+      ],
+    },
       { _sortOrder: 4, text: "Нажата кнопка из сообщества" },
     ],
     Текст: [
