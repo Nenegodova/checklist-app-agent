@@ -287,19 +287,18 @@ const PRESETS = {
     ],
     Текст: [
       {
-        _sortOrder: 2,
+        _sortOrder: 1,
         text: "Проверить что герой статьи не в бане, иначе сообщить редактору",
       },
-      {
-        _sortOrder: 2,
-        links: [
-          {
-            text: "Проверить наличие плашки Сообщества у всех ugc текстов",
-            label: "Методичка",
-            url: "https://tinkoffjournal.kaiten.ru/documents/d/582d315f-8e48-4930-98b8-2f1243c664a9",
-          },
-        ],
-      },
+      {_sortOrder: 1,
+      text: "Проверить наличие плашки Сообщества у всех ugc текстов",
+      links: [
+        {
+          label: "Методичка",
+          url: "https://tinkoffjournal.kaiten.ru/documents/d/582d315f-8e48-4930-98b8-2f1243c664a9",
+        },
+      ],
+    },
     ],
   },
   ugc2: {
