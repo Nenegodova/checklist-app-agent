@@ -804,6 +804,8 @@ const PRESET_EXCLUDES = {
 };
 export const DATA = {
   Админка: [
+
+    { _sortOrder: 0, text: "Проверить, что коллеги закрыли вкладку с визивигом" },
     { _sortOrder: 0, text: "Перенести мету из комментария в кайтене в админку" },
     {
       _sortOrder: 0,
