@@ -362,7 +362,8 @@ const PRESETS = {
         _sortOrder: 3,
         text: "На ОГ-картинке отсутствует бирка «Бесит»",
       },
-    ],   Прочее: [
+    ], 
+      Прочее: [
       {
         links: [
           {
@@ -390,6 +391,16 @@ const PRESETS = {
       {
         _sortOrder: 7,
         text: "В конце добавлен стандартный для формата опрос",
+      },
+    ],
+     Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/regret-ne-obrashchala-vnimanie-na-zdorove/",
+          },
+        ],
       },
     ],
   },
@@ -451,11 +462,21 @@ const PRESETS = {
         text: "Перед публикацией материала на главной в числе последних 5 материалов нет других дискуссий",
       },
     ],
+    Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/asit-otzivy/",
+          },
+        ],
+      },
+    ],
   },
   ugc8: {
     Админка: [
       { _sortOrder: 1, text: "Основным потоком стоит поток AMA" },
-      { _sortOrder: 2, text: "Затравка от лица автора" },
+      { _sortOrder: 5, text: "Затравка от лица автора" },
       {
         _sortOrder: 3,
         text: "Обложка мини над заголовком, без подписи",
@@ -463,12 +484,22 @@ const PRESETS = {
     ],
     Текст: [
       {
-        _sortOrder: 1,
+        _sortOrder: 0,
         text: "Автор материала эксперт, но на верстке его не добавляем",
       },
     ],
     Выпуск: [
       { _sortOrder: 1, text: "Выпускаем в пятницу в 18:00 МСК" },
+    ],
+     Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/gbo-ama/",
+          },
+        ],
+      },
     ],
   },
   ugc9: {
@@ -483,6 +514,16 @@ const PRESETS = {
     Текст: [
       { _sortOrder: 1, text: "Вопрос от читателя оформлен в бабл" },
       { _sortOrder: 2, text: "Ответ эксперта оформлен в бабл" },
+    ],
+    Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/otvechaem-chto-s-musorom/",
+          },
+        ],
+      },
     ],
   },
   ugc10: {
@@ -504,6 +545,15 @@ const PRESETS = {
     ],
     Текст: [
       { _sortOrder: 1, text: "Ответ эксперта оформлен в бабл" },
+    ],Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/vopros-vrachu-ogranicheniya-posle-korrekcii-zreniya/",
+          },
+        ],
+      },
     ],
   },
   ugc11: {
@@ -525,6 +575,16 @@ const PRESETS = {
     ],
     Текст: [
       { _sortOrder: 1, text: "Ответ эксперта оформлен в бабл" },
+    ],
+    Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/kakoi-dom-postroit/",
+          },
+        ],
+      },
     ],
   },
   ugc12: {
@@ -549,6 +609,16 @@ const PRESETS = {
       },
     ],
   },
+   Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/vopros-treneru-beg-plechi/",
+          },
+        ],
+      },
+    ],
   ugc13: {
     Админка: [
       { _sortOrder: 1, text: "Главный поток Письмо психологу" },
@@ -566,6 +636,16 @@ const PRESETS = {
     Текст: [
       { _sortOrder: 1, text: "Ответ эксперта оформлен в бабл" },
     ],
+     Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/dear-therapist-problema-s-psikhikoi/",
+          },
+        ],
+      },
+    ],
   },
   ugc14: {
     Админка: [
@@ -580,6 +660,16 @@ const PRESETS = {
     Текст: [
       { _sortOrder: 1, text: "Ответ эксперта оформлен в бабл" },
     ],
+    Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/vospitanie-nado-li-zastavliat-detei-chitat/",
+          },
+        ],
+      },
+    ],
   },
   ugc15: {
     Админка: [
@@ -593,6 +683,16 @@ const PRESETS = {
     ],
     Текст: [
       { _sortOrder: 1, text: "Ответ эксперта оформлен в бабл" },
+    ],
+    Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/kak-sovremennye-dvigateli-avtomobilei-vosprimut-toplivo-evro-3/",
+          },
+        ],
+      },
     ],
   },
   ugc16: {
@@ -615,6 +715,16 @@ const PRESETS = {
       },
       { _sortOrder: 3, text: "Не ставим ссылки на поля" },
     ],
+ Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/happiness-is-money-pros-cons/",
+          },
+        ],
+      },
+    ],
   },
   ugc17: {
     Админка: [
@@ -632,6 +742,33 @@ const PRESETS = {
           {
             label: "Пример статьи",
             url: "https://t-j.ru/weekly-comment-120726/",
+          },
+        ],
+      },
+    ],
+  },
+
+    ugc21: {
+    Админка: [
+      { text: "Облога мини над заголовком, подпись должна быть в «Дополнительно о статье», если ее нет — уточнить у фоторедактора" },
+       {  _sortOrder: 1, text: "Главный поток Больше ни ногой / стоит съездить" },
+    ],
+    Текст: [
+      {
+        _sortOrder: 9,
+        text: "В конце добавлен этаж с похожими материалами",
+      },
+    ],
+    Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи Больше ни ногой",
+            url: "https://t-j.ru/dont-go-ebeyty-lake/", 
+          },
+           {
+            label: "Пример статьи Стоит съездить",
+            url: "https://t-j.ru/must-see-zamok-garibaldi/", 
           },
         ],
       },
@@ -722,6 +859,17 @@ const PRESETS = {
       {
         _sortOrder: 1,
         text: "Перед публикацией голосовалки проверить, что все дневники уже вышли",
+      },
+    ],
+
+       Прочее: [
+      {
+        links: [
+          {
+            label: "Пример статьи",
+            url: "https://t-j.ru/diary-of-the-week-64/",
+          },
+        ],
       },
     ],
   },
@@ -831,6 +979,10 @@ const PRESET_EXCLUDES = {
      Выпуск: ["authoradd"],
   },
   ugc20: {
+    Текст: ["editor-badge", "lead"],
+     Выпуск: ["authoradd"],
+  },
+    ugc21: {
     Текст: ["editor-badge", "lead"],
      Выпуск: ["authoradd"],
   },
@@ -1065,6 +1217,7 @@ export const PRESET_LABELS = {
   ugc14: "Вопрос—ответ: Авто (UGC)",
   ugc15: "Вопрос—ответ: Образование (UGC)",
   ugc16: "За и Против: любая редакция (UGC)",
+  ugc21: "Особый лонг / Тревел (UGC)",
   ugc17: "Комментарий недели (UGC)",
   ugc18: "Комментарий месяца (UGC)",
   ugc19: "Сообщники месяца (UGC)",
