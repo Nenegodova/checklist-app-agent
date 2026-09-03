@@ -279,7 +279,7 @@ const PRESETS = {
       links: [
         {
           label: "Методичка",
-          url: "https://docs.google.com/document/d/1CxDHgn_96EO2yc_PepRxZqdcKXnZcb9ulJ-hLiEmHi8/edit?tab=t.0",
+          url: "https://tinkoffjournal.kaiten.ru/documents/d/47401677-0902-43a7-a182-8c025cd49d74",
         },
       ],
     },
