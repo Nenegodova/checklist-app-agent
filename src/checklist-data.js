@@ -1581,7 +1581,7 @@ export const PRESET_LABELS = {
   cd: "ЧД",
   shorts: "Шорты",
   ugc: "UGC (базовый)",
-  ugc2: "Анкета и поток (UGC)",
+
   ugc3: "Бесит — один автор (UGC)",
   ugc4: "Бесит — подборка (UGC)",
   ugc5: "Жалею (UGC)",
