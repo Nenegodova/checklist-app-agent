@@ -1280,9 +1280,8 @@ const PRESET_EXCLUDES = {
       "spending-card-price",
       "spending-card-shop-hide",
       "shorts-list-format",
-      "panel",
-      "og-picture",
-    ],
+      "panel"],
+      Выпуск: ["og-picture"],
   },
   ugc: {
     Текст: ["editor-badge"],
