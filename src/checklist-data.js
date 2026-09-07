@@ -1281,6 +1281,7 @@ const PRESET_EXCLUDES = {
       "spending-card-price",
       "spending-card-shop-hide",
       "shorts-list-format",
+      
     ],
   },
   ugc: {
@@ -1292,11 +1293,11 @@ const PRESET_EXCLUDES = {
      Выпуск: ["authoradd"],
   },
   ugc3: {
-    Текст: ["editor-badge", "og", "spending-poll"],
+    Текст: ["editor-badge", "og-header", "spending-poll"],
      Выпуск: ["authoradd"],
   },
   ugc4: {
-    Текст: ["editor-badge", "og"],
+    Текст: ["editor-badge", "og-header"],
      Выпуск: ["authoradd"],
   },
   ugc5: {
@@ -1304,11 +1305,11 @@ const PRESET_EXCLUDES = {
      Выпуск: ["authoradd"],
   },
   ugc6: {
-    Текст: ["editor-badge", "og"],
+    Текст: ["editor-badge", "og-header"],
      Выпуск: ["authoradd"],
   },
   ugc7: {
-    Текст: ["editor-badge", "og"],
+    Текст: ["editor-badge", "og-header"],
      Выпуск: ["authoradd"],
   },
   ugc8: {
@@ -1389,7 +1390,7 @@ export const DATA = {
         },
       ],
     },
-    { id: "og",
+    { id: "og-header",
       text: "Ог⁠⁠-⁠⁠заг = заголовок статьи, ОГ-описание на месте, текст на ОГ-картинке оттипографирован",
     },
     {
