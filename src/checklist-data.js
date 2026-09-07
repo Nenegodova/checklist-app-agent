@@ -230,7 +230,7 @@ const PRESETS = {
         _sortOrder: 3,
         text: "В заголовке нет эмодзи, если в карточке есть картинка",
       },
-       { id: "level3",
+       { 
         _sortOrder: 3,
         text: 'Везде проставлены верные уровни заголовков (В тайлах и плашках используем h2 level="3"',
       },
@@ -1267,7 +1267,7 @@ const PRESET_EXCLUDES = {
       "aside",
       "editors-notes",
       "contents-title",
-      "level3"
+      "heading-levels"
     ],
       Картинки: [
       "screenshots",
