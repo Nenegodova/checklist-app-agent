@@ -1074,7 +1074,7 @@ const PRESETS = {
 
     ugc21: {
     Админка: [
-      { text: "Облога мини над заголовком, подпись должна быть в «Дополнительно о статье», если ее нет — уточнить у фоторедактора" },
+      { text: "Обложка мини над заголовком, подпись должна быть в «Дополнительно о статье», если ее нет — уточнить у фоторедактора" },
         {_sortOrder: 3,
       text: "Наличие тега скрытия баннеров рекламы, при необходимости",
       links: [
@@ -1292,12 +1292,11 @@ const PRESET_EXCLUDES = {
     Текст: ["editor-badge"],
      Выпуск: ["authoradd"],
   },
-  ugc3: {
-
-       Админка: ["og-header,question-comments"],
-    Текст: ["editor-badge", "spending-poll"],
-     Выпуск: ["authoradd"],
-  },
+ugc3: {
+  Админка: ["og-header", "question-comments"], 
+  Текст: ["editor-badge", "spending-poll"],
+  Выпуск: ["authoradd"],
+},
   ugc4: {
        Админка: ["og-header"],
     Текст: ["editor-badge"],
@@ -1309,8 +1308,7 @@ const PRESET_EXCLUDES = {
      Выпуск: ["authoradd"],
   },
   ugc6: {
-        Админка: ["question-comments"],
-       Админка: ["og-header"],
+  Админка: ["og-header", "question-comments"], 
     Текст: ["editor-badge"],
      Выпуск: ["authoradd"],
   },
@@ -1321,7 +1319,6 @@ const PRESET_EXCLUDES = {
   },
   ugc8: {
         Админка: ["question-comments"],
-       Админка: ["question-comments"],
     Текст: ["editor-badge"],
      Выпуск: ["authoradd"],
   },
