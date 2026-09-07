@@ -1281,8 +1281,7 @@ const PRESET_EXCLUDES = {
       "spending-card-shop-hide",
       "shorts-list-format",
       "panel",
-      "og-picture"
-      
+      "og-picture",
     ],
   },
   ugc: {
